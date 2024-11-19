@@ -7,7 +7,7 @@
 ## Install
 
 ```
-npm install kvandake-gantt-task-react
+npm install webagility-gantt-task-react
 ```
 
 ## How to use it

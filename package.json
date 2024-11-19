@@ -1,11 +1,11 @@
 {
-  "name": "kvandake-gantt-task-react",
-  "version": "0.2.7",
+  "name": "webagility-gantt-task-react",
+  "version": "0.2.8",
   "description": "Interactive Gantt Chart for React with TypeScript.",
-  "author": "kvandake@gmail.com>",
-  "homepage": "https://github.com/kvandake/gantt-task-react",
+  "author": "webagility.io>",
+  "homepage": "https://github.com/duytaovo/gantt-task-react",
   "license": "MIT",
-  "repository": "https://github.com/kvandake/gantt-task-react",
+  "repository": "https://github.com/duytaovo/gantt-task-react",
   "main": "./dist/gantt-task-react.umd.js",
   "module": "./dist/gantt-task-react.es.js",
   "types": "./dist/index.d.ts",
@@ -22,10 +22,10 @@
     "task"
   ],
   "scripts": {
-    "storybook": "storybook dev -p 6006",
+    "storybook": "start-storybook -p 6006",
     "build": "vite build && tsc",
     "start": "vite --host",
-    "prepare": "run-s build",
+    "prepare": "npm run build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test": "run-s test:unit test:lint test:build",
     "test:build": "run-s build",
@@ -45,8 +45,8 @@
     "date-fns": "3.6.0"
   },
   "peerDependencies": {
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^19.0.0-rc",
+    "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^19.0.0-rc"
   },
   "devDependencies": {
     "@babel/plugin-transform-regenerator": "^7.20.5",
@@ -58,7 +58,8 @@
     "@storybook/addon-links": "^8.0.6",
     "@storybook/addon-onboarding": "^8.0.6",
     "@storybook/blocks": "^8.0.6",
-    "@storybook/react": "^8.0.6",
+    "@storybook/cli": "^8.4.4",
+    "@storybook/react": "^8.4.4",
     "@storybook/react-vite": "^8.0.6",
     "@storybook/test": "^8.0.6",
     "@testing-library/jest-dom": "^6.4.2",
