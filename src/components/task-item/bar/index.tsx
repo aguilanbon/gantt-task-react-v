@@ -192,7 +192,7 @@ export const Bar: React.FC<BarProps> = (props) => {
 
       {relationHandles}
 
-      {ctrlPressed && isProgressChangeable(task) && (
+      {false && isProgressChangeable(task) && (
         <BarProgressHandle
           className={`${styles.barHandle} ${isMovingProgress ? styles.barHandleImportantVisible : ""} ${isSmallWidth || isMovingDate || isRelationDrawMode ? styles.barHandleImportantHidden : ""}`}
           taskId={task.id}

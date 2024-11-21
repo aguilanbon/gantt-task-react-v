@@ -93,7 +93,7 @@ export const DEFAULT_THEME: GanttTheme = {
     barComparisonTaskHeight: 6,
     barComparisonTaskBorderHeight: 4,
     barComparisonTaskYOffset: 1,
-    barFill: 45,
+    barFill: 50,
     columnWidth: 60,
     contextMenuIconWidth: 20,
     contextMenuOptionHeight: 25,
@@ -108,7 +108,7 @@ export const DEFAULT_THEME: GanttTheme = {
     nestedTaskNameOffset: 20,
     relationCircleOffset: 10,
     relationCircleRadius: 5,
-    rowHeight: 54,
+    rowHeight: 64,
     titleCellWidth: 220,
 
     viewModeYearOffsetYears: 2,

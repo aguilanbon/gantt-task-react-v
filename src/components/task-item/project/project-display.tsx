@@ -1,4 +1,4 @@
-import React, { CSSProperties, useMemo } from "react";
+import React, { CSSProperties } from "react";
 
 import styles from "./project.module.css";
 
@@ -26,8 +26,8 @@ export const ProjectDisplay: React.FC<ProjectDisplayProps> = ({
   taskName,
   taskHalfHeight,
   taskHeight,
-  isSelected,
-  isCritical,
+  // isSelected,
+  // isCritical,
   progressWidth,
   progressX,
   taskYOffset,
@@ -37,37 +37,37 @@ export const ProjectDisplay: React.FC<ProjectDisplayProps> = ({
   startMoveFullTask,
   customStyle,
 }) => {
-  const barColor = useMemo(() => {
-    if (isCritical) {
-      if (isSelected) {
-        return "var(--gantt-project-background-selected-critical-color)";
-      }
+  // const barColor = useMemo(() => {
+  //   if (isCritical) {
+  //     if (isSelected) {
+  //       return "var(--gantt-project-background-selected-critical-color)";
+  //     }
 
-      return "var(--gantt-project-background-critical-color)";
-    }
+  //     return "var(--gantt-project-background-critical-color)";
+  //   }
 
-    if (isSelected) {
-      return "var(--gantt-project-background-selected-color)";
-    }
+  //   if (isSelected) {
+  //     return "var(--gantt-project-background-selected-color)";
+  //   }
 
-    return "var(--gantt-project-background-color)";
-  }, [isSelected, isCritical]);
+  //   return "var(--gantt-project-background-color)";
+  // }, [isSelected, isCritical]);
 
-  const processColor = useMemo(() => {
-    if (isCritical) {
-      if (isSelected) {
-        return "var(--gantt-project-progress-selected-critical-color)";
-      }
+  // const processColor = useMemo(() => {
+  //   if (isCritical) {
+  //     if (isSelected) {
+  //       return "var(--gantt-project-progress-selected-critical-color)";
+  //     }
 
-      return "var(--gantt-project-progress-critical-color)";
-    }
+  //     return "var(--gantt-project-progress-critical-color)";
+  //   }
 
-    if (isSelected) {
-      return "var(--gantt-project-progress-selected-color)";
-    }
+  //   if (isSelected) {
+  //     return "var(--gantt-project-progress-selected-color)";
+  //   }
 
-    return "var(--gantt-project-progress-color)";
-  }, [isSelected, isCritical]);
+  //   return "var(--gantt-project-progress-color)";
+  // }, [isSelected, isCritical]);
 
   const projectLeftTriangle = [
     x1,
@@ -104,7 +104,7 @@ export const ProjectDisplay: React.FC<ProjectDisplayProps> = ({
       className={styles.projectWrapper}
     >
       <rect
-        fill={barColor}
+        // fill={barColor}
         x={x1}
         width={width}
         y={taskYOffset}
@@ -112,6 +112,7 @@ export const ProjectDisplay: React.FC<ProjectDisplayProps> = ({
         rx={barCornerRadius}
         ry={barCornerRadius}
         className={styles.projectBackground}
+        fill={"unset"}
       />
       <rect
         x={progressX}
@@ -120,10 +121,12 @@ export const ProjectDisplay: React.FC<ProjectDisplayProps> = ({
         height={taskHeight}
         ry={barCornerRadius}
         rx={barCornerRadius}
-        fill={processColor}
+        // fill={processColor}
+        fill={"unset"}
       />
       <rect
-        fill={barColor}
+        // fill={barColor}
+        fill={"unset"}
         x={x1}
         width={width}
         y={taskYOffset}
@@ -135,12 +138,14 @@ export const ProjectDisplay: React.FC<ProjectDisplayProps> = ({
       <polygon
         className={styles.projectTop}
         points={projectLeftTriangle}
-        fill={barColor}
+        // fill={barColor}
+        fill={"unset"}
       />
       <polygon
         className={styles.projectTop}
         points={projectRightTriangle}
-        fill={barColor}
+        // fill={barColor}
+        fill={"unset"}
       />
     </g>
   );
