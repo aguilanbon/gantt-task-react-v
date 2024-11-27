@@ -166,9 +166,13 @@ const TaskListTableRowInner = forwardRef<HTMLDivElement, TaskListTableRowProps>(
         }}
         onContextMenu={onContextMenu}
       >
-        {!isOverlay && moveHandleProps && (
+        {task.type !== "project" && !isOverlay && moveHandleProps ? (
           <div className={`${styles.dragIndicator}`} {...moveHandleProps}>
             <DragIndicatorIcon className={styles.dragIndicatorIcon} />
+          </div>
+        ) : (
+          <div>
+            {/* <DragIndicatorIcon className={styles.dragIndicatorIcon} /> */}
           </div>
         )}
 

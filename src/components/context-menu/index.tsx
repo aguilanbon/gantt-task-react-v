@@ -128,6 +128,8 @@ export function ContextMenu(props: ContextMenuProps): ReactElement {
   //   handleCloseContextMenu();
   // });
 
+
+
   return (
     <>
       <div
@@ -161,15 +163,24 @@ export function ContextMenu(props: ContextMenuProps): ReactElement {
           }}
           {...getFloatingProps()}
         >
-          {optionsForRender.map((option, index) => (
+          {task.type !== "project" ? (
+            optionsForRender.map((option, index) => (
+              <MenuOption
+                onClose={handleCloseContextMenu}
+                distances={distances}
+                handleAction={handleOptionAction}
+                option={option}
+                key={index}
+              />
+            ))
+          ) : optionsForRender[2]?.checkIsAvailable ? (
             <MenuOption
               onClose={handleCloseContextMenu}
               distances={distances}
               handleAction={handleOptionAction}
-              option={option}
-              key={index}
+              option={optionsForRender[2]}
             />
-          ))}
+          ) : null}
         </div>
       )}
     </>

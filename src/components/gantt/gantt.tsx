@@ -5,6 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { refreshDB, saveMoveToDB } from "../../helpers/move-helper";
 
 import {
   ChangeAction,
@@ -326,7 +327,12 @@ export const Gantt: React.FC<GanttProps> = props => {
     resetSelectedTasks,
     selectTaskOnMouseDown,
     selectedIdsMirror,
-  } = useSelection(taskToRowIndexMap, rowIndexToTaskMap, checkTaskIdExists, onSelectTaskIds);
+  } = useSelection(
+    taskToRowIndexMap,
+    rowIndexToTaskMap,
+    checkTaskIdExists,
+    onSelectTaskIds
+  );
 
   const [startDate, minTaskDate, datesLength] = useMemo(
     () =>
@@ -1018,6 +1024,18 @@ export const Gantt: React.FC<GanttProps> = props => {
         taskForMove,
       });
 
+      if (target.parent === taskForMove.id) {
+        saveMoveToDB("move_task_after", {
+          task: null,
+          taskForMove: null,
+          taskIndex: null,
+          taskForMoveIndex: null,
+        }).then(() => {
+          refreshDB();
+        });
+        return;
+      }
+
       const taskIndex = taskIndexes[0].index;
       const { id, comparisonLevel = 1 } = taskForMove;
 
@@ -1043,23 +1061,26 @@ export const Gantt: React.FC<GanttProps> = props => {
         parent: target.parent,
       });
 
-      handleCommitInternal(prevTasks, withSuggestions, {
-        type: "move_task_after",
-        payload: {
-          task: target,
-          taskForMove,
-          taskIndex,
-          taskForMoveIndex,
-        },
+      saveMoveToDB("move_task_after", {
+        task: target,
+        taskForMove,
+        taskIndex,
+        taskForMoveIndex,
+      }).then(() => {
+        refreshDB();
       });
+
+      // handleCommitInternal(prevTasks, withSuggestions, {
+      //   type: "move_task_after",
+      //   payload: {
+      //     task: target,
+      //     taskForMove,
+      //     taskIndex,
+      //     taskForMoveIndex,
+      //   },
+      // });
     },
-    [
-      getMetadata,
-      handleCommitInternal,
-      mapTaskToGlobalIndex,
-      prepareSuggestions,
-      onChangeTooltipTask,
-    ]
+    [getMetadata, mapTaskToGlobalIndex, onChangeTooltipTask, prepareSuggestions]
   );
 
   const handleMoveTaskBefore = useCallback(
@@ -1096,6 +1117,15 @@ export const Gantt: React.FC<GanttProps> = props => {
       withSuggestions.splice(isMovedTaskBefore ? taskIndex - 1 : taskIndex, 0, {
         ...taskForMove,
         parent: target.parent,
+      });
+
+      saveMoveToDB("move_task_before", {
+        task: target,
+        taskForMove,
+        taskIndex,
+        taskForMoveIndex,
+      }).then(() => {
+        refreshDB();
       });
 
       handleCommitInternal(prevTasks, withSuggestions, {
