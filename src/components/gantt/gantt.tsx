@@ -1070,17 +1070,17 @@ export const Gantt: React.FC<GanttProps> = props => {
         refreshDB();
       });
 
-      // handleCommitInternal(prevTasks, withSuggestions, {
-      //   type: "move_task_after",
-      //   payload: {
-      //     task: target,
-      //     taskForMove,
-      //     taskIndex,
-      //     taskForMoveIndex,
-      //   },
-      // });
+      handleCommitInternal(prevTasks, withSuggestions, {
+        type: "move_task_after",
+        payload: {
+          task: target,
+          taskForMove,
+          taskIndex,
+          taskForMoveIndex,
+        },
+      });
     },
-    [getMetadata, mapTaskToGlobalIndex, onChangeTooltipTask, prepareSuggestions]
+    [getMetadata, handleCommitInternal, mapTaskToGlobalIndex, onChangeTooltipTask, prepareSuggestions]
   );
 
   const handleMoveTaskBefore = useCallback(
