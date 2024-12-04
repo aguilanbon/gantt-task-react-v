@@ -1,9 +1,8 @@
-import React from "react";
-import type {
-  ReactNode,
-} from "react";
+import React, { useEffect } from "react";
+import type { ReactNode } from "react";
 
 import styles from "./calendar.module.css";
+import { useTranslation } from "react-i18next";
 
 type TopPartOfCalendarProps = {
   value: ReactNode | null;
@@ -22,6 +21,16 @@ export const TopPartOfCalendar: React.FC<TopPartOfCalendarProps> = ({
   xText,
   yText,
 }) => {
+  const storedLanguage = JSON.parse(sessionStorage.getItem("language"));
+  const { t, i18n } = useTranslation();
+  useEffect(() => {
+    if (storedLanguage) {
+      const language = JSON.parse(storedLanguage);
+      i18n.changeLanguage(language.locale.toString());
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storedLanguage]);
+
   return (
     <g className="calendarTop">
       <line
@@ -33,12 +42,8 @@ export const TopPartOfCalendar: React.FC<TopPartOfCalendarProps> = ({
       />
 
       {value !== null && (
-        <text
-          y={yText - 4}
-          x={xText}
-          className={styles.calendarTopText}
-        >
-          {value}
+        <text y={yText - 4} x={xText} className={styles.calendarTopText}>
+          {t(value.toString())}
         </text>
       )}
     </g>

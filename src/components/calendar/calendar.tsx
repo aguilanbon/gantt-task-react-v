@@ -14,6 +14,7 @@ import { defaultRenderBottomHeader } from "./default-render-bottom-header";
 import { defaultRenderTopHeader } from "./default-render-top-header";
 
 import styles from "./calendar.module.css";
+import { useTranslation } from "react-i18next";
 
 export type CalendarProps = {
   scrollRef: RefObject<HTMLDivElement>;
@@ -51,6 +52,16 @@ export const Calendar: React.FC<CalendarProps> = ({
   rtl,
   startColumnIndex,
 }) => {
+  const storedLanguage = JSON.parse(sessionStorage.getItem("language"));
+  const { t, i18n } = useTranslation();
+  useEffect(() => {
+    if (storedLanguage) {
+      const language = JSON.parse(storedLanguage);
+      i18n.changeLanguage(language.locale.toString());
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storedLanguage]);
+
   const calendarRef = React.useRef<SVGSVGElement>(null);
   const renderBottomHeaderByDate = useCallback(
     (date: Date, index: number) =>
@@ -77,8 +88,13 @@ export const Calendar: React.FC<CalendarProps> = ({
   ): ReactNode => {
     return (
       <g key={key} className={styles.calendarBottomText}>
-        <text y={y} x={x} fontFamily={"var(--gantt-font-family)"} fill={'var(--gantt-secondary-text-color)'}>
-          {text}
+        <text
+          y={y}
+          x={x}
+          fontFamily={"var(--gantt-font-family)"}
+          fill={"var(--gantt-secondary-text-color)"}
+        >
+          {t(text.toString().split(",")[0])}
         </text>
       </g>
     );

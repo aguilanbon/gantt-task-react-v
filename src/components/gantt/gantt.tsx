@@ -5,8 +5,8 @@ import React, {
   useRef,
   useState,
 } from "react";
+import "../../../i18n"; 
 import { refreshDB, saveMoveToDB } from "../../helpers/move-helper";
-
 import {
   ChangeAction,
   CheckTaskIdExistsAtLevel,
