@@ -4,7 +4,7 @@ import { initReactI18next } from 'react-i18next';
 i18n
   .use(initReactI18next)
   .init({
-    fallbackLng: 'fr',
+    fallbackLng: 'en',
     debug: false,
     interpolation: {
       escapeValue: false, 
@@ -24,6 +24,18 @@ i18n
           October: 'October',
           November: 'November',
           December: 'December',
+
+          Jan: 'Jan',
+          Feb: 'Feb',
+          Mar: 'Mar',
+          Apr: 'Apr',
+          Jun: 'Jun',
+          Jul: 'Jul',
+          Aug: 'Aug',
+          Sep: 'Sep',
+          Oct: 'Oct',
+          Nov: 'Nov',
+          Dec: 'Dec',
 
           // days
           Mon: 'Mon',
@@ -49,6 +61,18 @@ i18n
           October: 'Octobre',
           November: 'Novembre',
           December: 'Décembre',
+
+          Jan: 'Jan',
+          Feb: 'Fév',
+          Mar: 'Mar',
+          Apr: 'Avr',
+          Jun: 'Mai',
+          Jul: 'Juin',
+          Aug: 'Aout',
+          Sep: 'Sep',
+          Oct: 'Oct',
+          Nov: 'Nov',
+          Dec: 'Déc',
 
           // days
           Mon: 'Lun',

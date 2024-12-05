@@ -29,6 +29,7 @@ export type CalendarProps = {
   renderTopHeader?: RenderTopHeader;
   rtl: boolean;
   startColumnIndex: number;
+  language: string;
 };
 
 interface MouseDragState {
@@ -51,16 +52,15 @@ export const Calendar: React.FC<CalendarProps> = ({
   renderTopHeader = defaultRenderTopHeader,
   rtl,
   startColumnIndex,
+  language,
 }) => {
-  const storedLanguage = JSON.parse(sessionStorage.getItem("language"));
   const { t, i18n } = useTranslation();
   useEffect(() => {
-    if (storedLanguage) {
-      const language = JSON.parse(storedLanguage);
-      i18n.changeLanguage(language.locale.toString());
+    if (language) {
+      i18n.changeLanguage(language);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [storedLanguage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [language]);
 
   const calendarRef = React.useRef<SVGSVGElement>(null);
   const renderBottomHeaderByDate = useCallback(
@@ -94,7 +94,13 @@ export const Calendar: React.FC<CalendarProps> = ({
           fontFamily={"var(--gantt-font-family)"}
           fill={"var(--gantt-secondary-text-color)"}
         >
-          {t(text.toString().split(",")[0])}
+          {text.toString().split(",")[1]
+            ? t(text.toString().split(",")[0]) +
+              "," +
+              text.toString().split(",")[1]
+            : text.toString().length == 3
+              ? t(text.toString())
+              : text}
         </text>
       </g>
     );
@@ -134,6 +140,7 @@ export const Calendar: React.FC<CalendarProps> = ({
             y2Line={headerHeight}
             xText={0}
             yText={0}
+            language={language}
           />
         );
       }
@@ -181,6 +188,7 @@ export const Calendar: React.FC<CalendarProps> = ({
             y2Line={topDefaultHeight}
             xText={additionalLeftSpace + xText}
             yText={topDefaultHeight * 0.9}
+            language={language}
           />
         );
       }
@@ -235,6 +243,7 @@ export const Calendar: React.FC<CalendarProps> = ({
               columnWidth * weeksCount * 0.5
             }
             yText={topDefaultHeight * 0.9}
+            language={language}
           />
         );
 
@@ -293,6 +302,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                 (startIndexOrZero + (endIndex - startIndexOrZero) / 2)
             }
             yText={topDefaultHeight * 0.9}
+            language={language}
           />
         );
       }
@@ -343,6 +353,7 @@ export const Calendar: React.FC<CalendarProps> = ({
               ticks * columnWidth * 0.5
             }
             yText={topDefaultHeight * 0.9}
+            language={language}
           />
         );
       }
@@ -392,6 +403,7 @@ export const Calendar: React.FC<CalendarProps> = ({
             y2Line={topDefaultHeight}
             xText={additionalLeftSpace + columnWidth * (i + topPosition)}
             yText={topDefaultHeight * 0.9}
+            language={language}
           />
         );
       }
@@ -440,7 +452,7 @@ export const Calendar: React.FC<CalendarProps> = ({
         clientY: event.clientY,
         scrollLeft: scrollRef.current.scrollLeft,
         scrollTop: scrollRef.current.scrollTop,
-      }
+      };
       calendarContainer.classList.add(styles.calendarDragging);
     };
 
@@ -450,7 +462,7 @@ export const Calendar: React.FC<CalendarProps> = ({
       }
 
       event.preventDefault();
-      const {clientX, scrollLeft, scrollTop, clientY} = moveStateRef.current;
+      const { clientX, scrollLeft, scrollTop, clientY } = moveStateRef.current;
       const scrollContainer = scrollRef.current;
       scrollContainer.scrollLeft = scrollLeft + clientX - event.clientX;
       scrollContainer.scrollTop = scrollTop + clientY - event.clientY;

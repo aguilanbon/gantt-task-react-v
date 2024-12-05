@@ -301,6 +301,12 @@ export type CheckIsHoliday = (
 
 export interface GanttProps {
   /**
+   * Language
+   */
+  language?:string  
+  
+
+  /**
    * Theme
    */
   theme?: GanttPartialTheme;

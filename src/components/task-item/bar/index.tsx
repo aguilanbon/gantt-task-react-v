@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { getProgressPoint } from "../../../helpers/bar-helper";
 import { BarDisplay } from "./bar-display";
@@ -11,7 +17,7 @@ import { ProjectDisplay } from "../project/project-display";
 import { BarProps } from "./types";
 import { BarRelationWrapper } from "../bar-relation";
 
-export const Bar: React.FC<BarProps> = (props) => {
+export const Bar: React.FC<BarProps> = props => {
   const {
     children: relationHandles,
     distances: { barCornerRadius, handleWidth },
@@ -40,16 +46,16 @@ export const Bar: React.FC<BarProps> = (props) => {
   const [ctrlPressed, setCtrlPressed] = useState(true);
   const isRelationDrawMode = useMemo(
     () => !!ganttRelationEvent,
-    [ganttRelationEvent],
+    [ganttRelationEvent]
   );
   const isMovingProgress = useMemo(
     () => movingAction === "progress",
-    [movingAction],
+    [movingAction]
   );
 
   const isMovingDate = useMemo(
     () => movingAction === "start" || movingAction === "end",
-    [movingAction],
+    [movingAction]
   );
 
   // const isMovingEnd = useMemo(() => movingAction === "end", [movingAction]);
@@ -58,34 +64,34 @@ export const Bar: React.FC<BarProps> = (props) => {
     (clientX: number) => {
       onTaskEventStart("move", clientX);
     },
-    [onTaskEventStart],
+    [onTaskEventStart]
   );
 
   const startMoveStartOfTask = useCallback(
     (clientX: number) => {
       onTaskEventStart("start", clientX);
     },
-    [onTaskEventStart],
+    [onTaskEventStart]
   );
 
   const startMoveEndOfTask = useCallback(
     (clientX: number) => {
       onTaskEventStart("end", clientX);
     },
-    [onTaskEventStart],
+    [onTaskEventStart]
   );
 
   const startMoveProgress = useCallback(
     (clientX: number) => {
       onTaskEventStart("progress", clientX);
     },
-    [onTaskEventStart],
+    [onTaskEventStart]
   );
 
   const progressPoint = getProgressPoint(
     +!rtl * progressWidth + progressX,
     taskYOffset,
-    taskHeight,
+    taskHeight
   );
 
   const renderBarDisplay = () => {
@@ -131,36 +137,34 @@ export const Bar: React.FC<BarProps> = (props) => {
   };
 
   useEffect(() => {
-      const rootCurrent = rootRef.current;
-      if (rootCurrent) {
-        const handleKeydown = (event: KeyboardEvent) => {
-          if (event.ctrlKey) {
-            setCtrlPressed(true);
-          } else {
-            setCtrlPressed(false);
-          }
-        };
-
-        const handleKeyup = () => {
+    const rootCurrent = rootRef.current;
+    if (rootCurrent) {
+      const handleKeydown = (event: KeyboardEvent) => {
+        if (event.ctrlKey) {
+          setCtrlPressed(true);
+        } else {
           setCtrlPressed(false);
-        };
-
-        rootCurrent.addEventListener("keydown", handleKeydown);
-        rootCurrent.addEventListener("keyup", handleKeyup);
-        return () => {
-          rootCurrent.removeEventListener("keydown", handleKeydown);
-          rootCurrent.removeEventListener("keyup", handleKeyup);
-        };
-      }
-
-      return () => {
+        }
       };
-    },
-    []);
+
+      const handleKeyup = () => {
+        setCtrlPressed(false);
+      };
+
+      rootCurrent.addEventListener("keydown", handleKeydown);
+      rootCurrent.addEventListener("keyup", handleKeyup);
+      return () => {
+        rootCurrent.removeEventListener("keydown", handleKeydown);
+        rootCurrent.removeEventListener("keyup", handleKeyup);
+      };
+    }
+
+    return () => {};
+  }, []);
 
   return (
     <BarRelationWrapper ref={rootRef} className={styles.barWrapper}>
-      {renderBarDisplay()}
+      {task.id !== "no-project-asigned" && renderBarDisplay()}
 
       {/* left */}
       {ctrlPressed && isDateChangeable(task) && (

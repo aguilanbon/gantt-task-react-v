@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import "../../../i18n"; 
+import "../../i18n"; 
 import { refreshDB, saveMoveToDB } from "../../helpers/move-helper";
 import {
   ChangeAction,
@@ -124,6 +124,7 @@ export const Gantt: React.FC<GanttProps> = props => {
     viewDate,
     viewMode = ViewMode.Day,
     locale: clientLocale,
+    language,
   } = props;
   const ganttSVGRef = useRef<SVGSVGElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -1490,20 +1491,9 @@ export const Gantt: React.FC<GanttProps> = props => {
       renderTopHeader: taskBar.renderTopHeader,
       rtl,
       startColumnIndex,
+      language,
     }),
-    [
-      additionalLeftSpace,
-      dateSetup,
-      distances,
-      endColumnIndex,
-      fullSvgWidth,
-      getDate,
-      isUnknownDates,
-      taskBar.renderBottomHeader,
-      taskBar.renderTopHeader,
-      rtl,
-      startColumnIndex,
-    ]
+    [additionalLeftSpace, dateSetup, distances, endColumnIndex, fullSvgWidth, getDate, isUnknownDates, taskBar.renderBottomHeader, taskBar.renderTopHeader, rtl, startColumnIndex, language]
   );
 
   const renderTaskBarProps: TaskGanttContentProps = useMemo(

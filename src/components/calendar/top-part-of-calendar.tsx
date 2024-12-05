@@ -11,6 +11,7 @@ type TopPartOfCalendarProps = {
   y2Line: number;
   xText: number;
   yText: number;
+  language:string
 };
 
 export const TopPartOfCalendar: React.FC<TopPartOfCalendarProps> = ({
@@ -20,16 +21,15 @@ export const TopPartOfCalendar: React.FC<TopPartOfCalendarProps> = ({
   y2Line,
   xText,
   yText,
+  language
 }) => {
-  const storedLanguage = JSON.parse(sessionStorage.getItem("language"));
-  const { t, i18n } = useTranslation();
+  const { t,i18n } = useTranslation();
   useEffect(() => {
-    if (storedLanguage) {
-      const language = JSON.parse(storedLanguage);
-      i18n.changeLanguage(language.locale.toString());
+    if (language) {
+      i18n.changeLanguage(language);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [storedLanguage]);
+  }, []);
 
   return (
     <g className="calendarTop">
@@ -43,7 +43,13 @@ export const TopPartOfCalendar: React.FC<TopPartOfCalendarProps> = ({
 
       {value !== null && (
         <text y={yText - 4} x={xText} className={styles.calendarTopText}>
-          {t(value.toString())}
+          {value.toString().split(",")[1]
+            ? t(value.toString().split(",")[0]) +
+              "," +
+              value.toString().split(",")[1]
+            : value.toString().length >= 3
+              ? t(value.toString())
+              : value}
         </text>
       )}
     </g>
