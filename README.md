@@ -2,12 +2,17 @@
 
 ## Interactive Gantt Chart for React with TypeScript.
 
+## Recent Updates
+
+- Flexible Gantt height now adapts to its parent container, now we always see the horizontal scrolls for both task list and gantt.
+- Fixed sticky gantt header on drag
+
 ## [Live Demo In Storybook](https://661071b076b50cb537c16c19-yrsukdfefs.chromatic.com/)
 
 ## Install
 
 ```
-npm install webagility-gantt-task-react
+npm install https://github.com/aguilanbon/gantt-task-react-v"
 ```
 
 ## How to use it
@@ -96,7 +101,7 @@ yarn storebook
 | Parameter Name             | Type   | Description                                                                                    |
 | :------------------------- | :----- | :--------------------------------------------------------------------------------------------- |
 | headerHeight               | number | Specifies the header height.                                                                   |
-| ganttHeight                | number | Specifies the gantt chart height without header. Default is 0. It`s mean no height limitation. |
+| ganttHeight                | number | Specifies the gantt chart height without header. If not set or 0, adapts to its parent container. |
 | columnWidth                | number | Specifies the time period width.                                                               |
 | listCellWidth              | string | Specifies the task list cell width. Empty string is mean "no display".                         |
 | rowHeight                  | number | Specifies the task row height.                                                                 |
