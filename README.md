@@ -7,6 +7,7 @@
 - Flexible Gantt height now adapts to its parent container, now we always see the horizontal scrolls for both task list and gantt.
 - Fixed sticky gantt header on drag
 - Fixed Tooltip should show only on gantt section current view boundaries
+- Added Tooltip for comparison bars
 
 ## [Live Demo In Storybook](https://661071b076b50cb537c16c19-yrsukdfefs.chromatic.com/)
 
