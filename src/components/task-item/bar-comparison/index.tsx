@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import styles from "./bar-comparison.module.css";
-import { TaskComparisonDatesCoordinates } from "../../../types";
+import { TaskComparisonDatesCoordinates, Task } from "../../../types";
 
 interface Props extends Omit<TaskComparisonDatesCoordinates, "x" | "y"> {
   barCornerRadius: number;
@@ -10,11 +10,24 @@ interface Props extends Omit<TaskComparisonDatesCoordinates, "x" | "y"> {
   isPlan?: boolean;
   isCritical?: boolean;
   inProgress?: boolean;
+  task?: Task;
+  onTooltipTask?: (task: Task | null, element: Element | null) => void;
 }
 
 export const BarComparison: React.FC<Props> = props => {
-  const { yOffset, borderHeight, barCornerRadius, isWarning, isPlan, isCritical, width, height, inProgress } =
-    props;
+  const {
+    yOffset,
+    borderHeight,
+    barCornerRadius,
+    isWarning,
+    isPlan,
+    isCritical,
+    width,
+    height,
+    inProgress,
+    task,
+    onTooltipTask,
+  } = props;
   const lineHeight = useMemo(() => Math.max(height, 4), [height]);
 
   const barColor = useMemo(() => {
@@ -35,7 +48,16 @@ export const BarComparison: React.FC<Props> = props => {
   }, [inProgress, isCritical, isPlan, isWarning]);
 
   return (
-    <g>
+    <g
+      onMouseEnter={e => {
+        e.stopPropagation();
+        onTooltipTask && onTooltipTask(task || null, e.currentTarget);
+      }}
+      onMouseLeave={e => {
+        e.stopPropagation();
+        onTooltipTask && onTooltipTask(null, null);
+      }}
+    >
       <rect
         x={0}
         width={width}

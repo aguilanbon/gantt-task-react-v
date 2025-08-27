@@ -14,6 +14,11 @@ const data: Task[] = [
     dependencies: [],
     assignees: [],
     style: {},
+    comparisonDates: {
+      // comparison finished earlier than main task
+      start: new Date(2022, 11, 31),
+      end: new Date(2023, 0, 2),
+    },
   },
   {
     start: new Date(2023, 0, 4),
@@ -32,6 +37,11 @@ const data: Task[] = [
     ],
     assignees: [],
     style: {},
+    comparisonDates: {
+      // comparison aligns with main task (plan)
+      start: new Date(2023, 0, 4),
+      end: new Date(2023, 0, 7),
+    },
   },
   {
     start: new Date(2023, 0, 9),
@@ -50,6 +60,11 @@ const data: Task[] = [
     ],
     assignees: [],
     style: {},
+    comparisonDates: {
+      // comparison ends after main task (warning)
+      start: new Date(2023, 0, 11),
+      end: new Date(2023, 0, 13),
+    },
   },
   {
     start: new Date(2023, 0, 13),
@@ -68,6 +83,11 @@ const data: Task[] = [
     ],
     assignees: [],
     style: {},
+    comparisonDates: {
+      // in-progress comparison (no end yet)
+      start: new Date(2023, 0, 14),
+      end: null,
+    },
   },
   {
     start: new Date(2023, 0, 16),
@@ -86,6 +106,11 @@ const data: Task[] = [
     ],
     assignees: [],
     style: {},
+    comparisonDates: {
+      // comparison that slightly exceeds the main task
+      start: new Date(2023, 0, 16),
+      end: new Date(2023, 0, 19),
+    },
   },
 ];
 
@@ -94,9 +119,28 @@ const generateMoreTasks = (): Task[] => {
   const moreTasks: Task[] = [];
   for (let i = 6; i <= 50; i++) {
     const startDay = Math.floor(i / 5) + 10; // Spread tasks across more days
+    const taskStart = new Date(2023, 0, startDay);
+    const taskEnd = new Date(
+      2023,
+      0,
+      startDay + Math.floor(Math.random() * 5) + 1
+    );
+
+    // Randomly add comparison dates to some generated tasks to demo comparison bars
+    const addComparison = Math.random() < 0.25;
+    const comparisonDates = addComparison
+      ? {
+          start: new Date(2023, 0, startDay - Math.floor(Math.random() * 3)),
+          end:
+            Math.random() < 0.2
+              ? null
+              : new Date(2023, 0, startDay + Math.floor(Math.random() * 4) + 1),
+        }
+      : undefined;
+
     moreTasks.push({
-      start: new Date(2023, 0, startDay),
-      end: new Date(2023, 0, startDay + Math.floor(Math.random() * 5) + 1),
+      start: taskStart,
+      end: taskEnd,
       name: `Task ${i}`,
       id: `${i}`,
       type: "task" as const,
@@ -105,6 +149,7 @@ const generateMoreTasks = (): Task[] => {
       dependencies: [],
       assignees: [],
       style: {},
+      ...(comparisonDates ? { comparisonDates } : {}),
     });
   }
   return moreTasks;

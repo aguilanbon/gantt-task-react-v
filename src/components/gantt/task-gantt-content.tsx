@@ -50,7 +50,7 @@ export interface TaskGanttContentProps extends GanttTaskBarActions {
     action: TaskBarMoveAction,
     task: Task,
     clientX: number,
-    taskRootNode: Element,
+    taskRootNode: Element
   ) => void;
   mapGlobalRowIndexToTask: GlobalRowIndexToTaskMap;
   onArrowDoubleClick: (taskFrom: Task, taskTo: Task) => void;
@@ -75,7 +75,7 @@ export interface TaskGanttContentProps extends GanttTaskBarActions {
   viewMode: ViewMode;
 }
 
-const TaskGanttContentInner: React.FC<TaskGanttContentProps> = (props) => {
+const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
   const {
     authorizedRelations,
     additionalLeftSpace,
@@ -135,8 +135,8 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = (props) => {
             y={0}
             fill={"var(--gantt-calendar-holiday-color)"}
             key={i}
-            pointerEvents={'none'}
-          />,
+            pointerEvents={"none"}
+          />
         );
       }
     }
@@ -192,8 +192,8 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = (props) => {
             height={fullRowHeight}
             fill={"var(--gantt-table-selected-task-background-color)"}
             key={taskId}
-            pointerEvents={'none'}
-          />,
+            pointerEvents={"none"}
+          />
         );
       }
 
@@ -275,7 +275,7 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = (props) => {
             renderCustomLabel={renderCustomLabel}
             viewMode={viewMode}
           />
-        </svg>,
+        </svg>
       );
 
       if (task.comparisonDates && comparisonDates) {
@@ -293,12 +293,15 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = (props) => {
               inProgress={!task.comparisonDates.end}
               isPlan={
                 (task.comparisonDates.start.getTime() >= task.start.getTime() &&
-                  (!!task.comparisonDates.end && task.comparisonDates.end.getTime() <= task.end.getTime())) ||
+                  !!task.comparisonDates.end &&
+                  task.comparisonDates.end.getTime() <= task.end.getTime()) ||
                 (task.comparisonDates.start.getTime() <= task.start.getTime() &&
-                  (!!task.comparisonDates.end && task.comparisonDates.end.getTime() <= task.start.getTime()))
+                  !!task.comparisonDates.end &&
+                  task.comparisonDates.end.getTime() <= task.start.getTime())
               }
               isWarning={
-                !!task.comparisonDates.end && task.comparisonDates.end.getTime() >= task.end.getTime()
+                !!task.comparisonDates.end &&
+                task.comparisonDates.end.getTime() >= task.end.getTime()
               }
               isCritical={
                 task.comparisonDates.start.getTime() > task.start.getTime()
@@ -308,8 +311,10 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = (props) => {
               width={comparisonDates.width}
               borderHeight={distances.barComparisonTaskBorderHeight}
               yOffset={distances.barComparisonTaskYOffset}
+              task={task}
+              onTooltipTask={onTooltipTask}
             />
-          </svg>,
+          </svg>
         );
       }
 
@@ -340,14 +345,14 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = (props) => {
           .filter(({ source }) => visibleTasksMirror[source.id])
           .forEach(
             ({
-               containerHeight,
-               containerY,
-               innerFromY,
-               innerToY,
-               ownTarget,
-               source,
-               sourceTarget,
-             }) => {
+              containerHeight,
+              containerY,
+              innerFromY,
+              innerToY,
+              ownTarget,
+              source,
+              sourceTarget,
+            }) => {
               if (addedDependenciesAtTask[source.id]) {
                 return;
               }
@@ -360,8 +365,10 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = (props) => {
 
               const { x1: fromX1, x2: fromX2 } = getTaskCoordinates(source);
 
-              const containerX = Math.min(fromX1, taskX1) - DELTA_RELATION_WIDTH;
-              const containerWidth = Math.max(fromX2, taskX2) - containerX + DELTA_RELATION_WIDTH;
+              const containerX =
+                Math.min(fromX1, taskX1) - DELTA_RELATION_WIDTH;
+              const containerWidth =
+                Math.max(fromX2, taskX2) - containerX + DELTA_RELATION_WIDTH;
 
               arrowsRes.push(
                 <svg
@@ -389,9 +396,9 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = (props) => {
                     rtl={rtl}
                     onArrowDoubleClick={onArrowDoubleClick}
                   />
-                </svg>,
+                </svg>
               );
-            },
+            }
           );
       }
 
@@ -408,14 +415,14 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = (props) => {
           .filter(({ dependent }) => visibleTasksMirror[dependent.id])
           .forEach(
             ({
-               containerHeight,
-               containerY,
-               innerFromY,
-               innerToY,
-               ownTarget,
-               dependent,
-               dependentTarget,
-             }) => {
+              containerHeight,
+              containerY,
+              innerFromY,
+              innerToY,
+              ownTarget,
+              dependent,
+              dependentTarget,
+            }) => {
               const addedDependenciesAtDependent =
                 addedDependenciesAtLevel[dependent.id] || {};
               if (!addedDependenciesAtLevel[dependent.id]) {
@@ -439,8 +446,9 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = (props) => {
 
               const { x1: toX1, x2: toX2 } = getTaskCoordinates(dependent);
 
-              const containerX =  Math.min(toX1, taskX1) - DELTA_RELATION_WIDTH;
-              const containerWidth = Math.max(toX2, taskX2) - containerX + DELTA_RELATION_WIDTH;
+              const containerX = Math.min(toX1, taskX1) - DELTA_RELATION_WIDTH;
+              const containerWidth =
+                Math.max(toX2, taskX2) - containerX + DELTA_RELATION_WIDTH;
 
               arrowsRes.push(
                 <svg
@@ -468,9 +476,9 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = (props) => {
                     rtl={rtl}
                     onArrowDoubleClick={onArrowDoubleClick}
                   />
-                </svg>,
+                </svg>
               );
-            },
+            }
           );
       }
     }
@@ -519,7 +527,6 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = (props) => {
       {renderedSelectedTasks}
 
       <g>{renderedHolidays}</g>
-
 
       <g
         className="arrows"
