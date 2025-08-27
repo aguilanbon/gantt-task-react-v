@@ -1003,7 +1003,7 @@ export const Gantt: React.FC<GanttProps> = props => {
     setFloatingRef,
     getFloatingProps,
     onChangeTooltipTask,
-  } = useTaskTooltip(changeInProgress);
+  } = useTaskTooltip(changeInProgress, verticalGanttContainerRef);
 
   const handleDeleteTasks = useCallback(
     (tasksForDelete: readonly RenderTask[]) => {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, RefObject } from "react";
 
 import { autoUpdate, flip, offset, shift } from "@floating-ui/dom";
 import {
@@ -11,7 +11,10 @@ import {
 
 import type { ChangeInProgress, Task } from "../types";
 
-export const useTaskTooltip = (changeInProgress: ChangeInProgress | null) => {
+export const useTaskTooltip = (
+  changeInProgress: ChangeInProgress | null,
+  boundaryElement?: RefObject<HTMLElement>
+) => {
   const [hoverTooltipTask, setHoverTooltipTask] = useState<Task | null>(null);
   const [hoverTooltipEl, setHoverTooltipEl] = useState<Element | null>(null);
 
@@ -39,9 +42,16 @@ export const useTaskTooltip = (changeInProgress: ChangeInProgress | null) => {
     context,
   } = useFloating({
     open: Boolean(tooltipTask),
-    middleware: [offset(10), flip(), shift()],
+    middleware: [
+      offset(10),
+      flip(),
+      shift({
+        boundary: boundaryElement?.current || undefined,
+        padding: 8,
+      }),
+    ],
     whileElementsMounted: autoUpdate,
-    strategy: 'absolute'
+    strategy: "absolute",
   });
 
   const focus = useFocus(context);
