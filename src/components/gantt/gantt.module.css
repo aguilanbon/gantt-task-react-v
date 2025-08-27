@@ -7,6 +7,7 @@
   /*noinspection CssUnresolvedCustomProperty*/
   border-right: 1px solid var(--gantt-calendar-divider-color, var(--gantt-divider-color));
   flex-grow: 1;
+  height: 100%;
 }
 
 .ganttVerticalContainer::-webkit-scrollbar {
@@ -46,6 +47,7 @@
   list-style: none;
   outline: none;
   position: relative;
+  height: 100%;
   /*noinspection CssUnresolvedCustomProperty*/
   border-bottom: 1px solid var(--gantt-divider-color);
 }

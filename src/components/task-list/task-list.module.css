@@ -1,11 +1,17 @@
 .taskListRoot {
   position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   /*noinspection CssUnresolvedCustomProperty*/
   border-left: 1px solid var(--gantt-table-divider-color, var(--gantt-divider-color));
 }
 
 .taskListHorizontalScroll {
   overflow-x: scroll;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .taskListHorizontalScroll::-webkit-scrollbar {
@@ -68,10 +74,14 @@
   margin: 0;
   padding: 0;
   overflow: hidden;
+  flex-grow: 1;
 }
 
 .tableWrapper {
   position: relative;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .scrollToTop {

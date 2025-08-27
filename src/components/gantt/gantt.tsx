@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import "../../i18n"; 
+import "../../i18n";
 import { refreshDB, saveMoveToDB } from "../../helpers/move-helper";
 import {
   ChangeAction,
@@ -199,9 +199,33 @@ export const Gantt: React.FC<GanttProps> = props => {
     [...clientTasks].sort(sortTasks)
   );
 
+  const [containerHeight, setContainerHeight] = useState<number | undefined>(
+    undefined
+  );
+
   useEffect(() => {
     setSortedTasks([...clientTasks].sort(sortTasks));
   }, [clientTasks]);
+
+  // Track container height changes for responsive behavior
+  useEffect(() => {
+    if (!wrapperRef.current) {
+      return () => {};
+    }
+
+    const resizeObserver = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        const { height } = entry.contentRect;
+        setContainerHeight(height);
+      }
+    });
+
+    resizeObserver.observe(wrapperRef.current);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
 
   const [childTasksMap, rootTasksMap] = useMemo(
     () => getChildsAndRoots(sortedTasks, null),
@@ -302,13 +326,26 @@ export const Gantt: React.FC<GanttProps> = props => {
     [maxLevelLength, fullRowHeight, taskList?.tableBottom?.height]
   );
 
-  const ganttHeight = useMemo(
-    () =>
-      distances.ganttHeight
-        ? Math.min(distances.ganttHeight, ganttFullHeight)
-        : ganttFullHeight,
-    [distances, ganttFullHeight]
-  );
+  const ganttHeight = useMemo(() => {
+    // If explicit ganttHeight is provided in theme, use it with limits
+    if (distances.ganttHeight) {
+      return Math.min(distances.ganttHeight, ganttFullHeight);
+    }
+
+    // If container height is available, use it (minus header height and some padding)
+    if (containerHeight) {
+      const availableHeight = containerHeight - distances.headerHeight;
+      return Math.min(availableHeight, ganttFullHeight);
+    }
+
+    // Fallback to full height
+    return ganttFullHeight;
+  }, [
+    distances.ganttHeight,
+    distances.headerHeight,
+    ganttFullHeight,
+    containerHeight,
+  ]);
 
   const [taskToRowIndexMap, rowIndexToTaskMap, mapGlobalRowIndexToTask] =
     useMemo(
@@ -1081,7 +1118,13 @@ export const Gantt: React.FC<GanttProps> = props => {
         },
       });
     },
-    [getMetadata, handleCommitInternal, mapTaskToGlobalIndex, onChangeTooltipTask, prepareSuggestions]
+    [
+      getMetadata,
+      handleCommitInternal,
+      mapTaskToGlobalIndex,
+      onChangeTooltipTask,
+      prepareSuggestions,
+    ]
   );
 
   const handleMoveTaskBefore = useCallback(
@@ -1493,7 +1536,20 @@ export const Gantt: React.FC<GanttProps> = props => {
       startColumnIndex,
       language,
     }),
-    [additionalLeftSpace, dateSetup, distances, endColumnIndex, fullSvgWidth, getDate, isUnknownDates, taskBar.renderBottomHeader, taskBar.renderTopHeader, rtl, startColumnIndex, language]
+    [
+      additionalLeftSpace,
+      dateSetup,
+      distances,
+      endColumnIndex,
+      fullSvgWidth,
+      getDate,
+      isUnknownDates,
+      taskBar.renderBottomHeader,
+      taskBar.renderTopHeader,
+      rtl,
+      startColumnIndex,
+      language,
+    ]
   );
 
   const renderTaskBarProps: TaskGanttContentProps = useMemo(

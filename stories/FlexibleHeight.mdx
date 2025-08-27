@@ -1,0 +1,115 @@
+# Flexible Height
+
+The Gantt component now supports flexible and responsive height that adapts to its container. This improvement makes it much easier to integrate the Gantt chart into different layouts and responsive designs.
+
+## Key Features
+
+### 🎯 Adaptive Height
+
+The Gantt chart automatically adapts to the height of its parent container, making it perfect for:
+
+- Dashboard layouts
+- Modal dialogs
+- Sidebar components
+- Full-screen applications
+- Responsive grid systems
+
+### 📱 Responsive Behavior
+
+- Uses ResizeObserver to detect container size changes
+- Automatically adjusts height when the parent container is resized
+- Maintains proper scrolling behavior
+- Preserves aspect ratios and visual consistency
+
+### 🎨 Better UX
+
+- Always shows vertical and horizontal scrollbars when needed
+- Users can always see all tasks and navigate easily
+- No more fixed 600px height limitation
+- Smooth scrolling and drag interactions
+
+## CSS Implementation
+
+The flexible height is achieved through:
+
+```css
+.wrapper {
+  height: 100%;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.ganttVerticalContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.horizontalContainer {
+  flex: 1;
+  min-height: 0;
+}
+```
+
+## JavaScript Implementation
+
+The component uses ResizeObserver to monitor container size changes:
+
+```typescript
+useEffect(() => {
+  const wrapperElement = wrapperRef.current;
+  if (!wrapperElement) {
+    return undefined;
+  }
+
+  const resizeObserver = new ResizeObserver(entries => {
+    for (const entry of entries) {
+      const { height } = entry.contentRect;
+      if (height > 0) {
+        setContainerHeight(height);
+      }
+    }
+  });
+
+  resizeObserver.observe(wrapperElement);
+  return () => resizeObserver.disconnect();
+}, []);
+```
+
+## Usage Examples
+
+### Fixed Height Container
+
+```jsx
+<div style={{ height: "400px" }}>
+  <Gantt tasks={tasks} viewMode={ViewMode.Day} />
+</div>
+```
+
+### Flex Layout
+
+```jsx
+<div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+  <header>My Header</header>
+  <div style={{ flex: 1 }}>
+    <Gantt tasks={tasks} viewMode={ViewMode.Day} />
+  </div>
+</div>
+```
+
+### CSS Grid
+
+```jsx
+<div
+  style={{
+    display: "grid",
+    gridTemplateRows: "auto 1fr auto",
+    height: "100vh",
+  }}
+>
+  <header>Header</header>
+  <Gantt tasks={tasks} viewMode={ViewMode.Day} />
+  <footer>Footer</footer>
+</div>
+```
