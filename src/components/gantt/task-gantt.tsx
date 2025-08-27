@@ -29,7 +29,7 @@ interface MouseDragState {
   clientY: number;
 }
 
-const TaskGanttInner: React.FC<TaskGanttProps> = (props) => {
+const TaskGanttInner: React.FC<TaskGanttProps> = props => {
   const {
     barProps,
     barProps: { additionalLeftSpace },
@@ -47,7 +47,7 @@ const TaskGanttInner: React.FC<TaskGanttProps> = (props) => {
     onVerticalScrollbarScrollX,
     verticalGanttContainerRef,
     verticalScrollbarRef,
-  }= props;
+  } = props;
   const contentRef = React.useRef<SVGRectElement>(null);
   const moveStateVertRef = useRef<MouseDragState | null>(null);
   const moveStateHorRef = useRef<MouseDragState | null>(null);
@@ -58,7 +58,7 @@ const TaskGanttInner: React.FC<TaskGanttProps> = (props) => {
       height: Math.max(ganttHeight, minimumRowDisplayed * rowHeight),
       width: fullSvgWidth,
     }),
-    [ganttHeight, minimumRowDisplayed, rowHeight, fullSvgWidth],
+    [ganttHeight, minimumRowDisplayed, rowHeight, fullSvgWidth]
   );
 
   const gridStyle = useMemo<CSSProperties>(
@@ -80,14 +80,13 @@ const TaskGanttInner: React.FC<TaskGanttProps> = (props) => {
       ganttFullHeight,
       minimumRowDisplayed,
       rowHeight,
-    ],
+    ]
   );
 
   // https://stackoverflow.com/questions/40926181/react-scrolling-a-div-by-dragging-the-mouse
   useEffect(() => {
     if (!contentRef.current) {
-      return () => {
-      };
+      return () => {};
     }
 
     const contentContainer = contentRef.current;
@@ -121,10 +120,10 @@ const TaskGanttInner: React.FC<TaskGanttProps> = (props) => {
       }
 
       event.preventDefault();
-      const { clientX, scrollLeft, scrollTop, clientY } = moveStateVertRef.current;
+      const { clientX, scrollLeft } = moveStateVertRef.current;
       const scrollVertContainer = verticalGanttContainerRef.current;
+      // Only adjust horizontal scroll here; vertical scroll handled by the inner containers
       scrollVertContainer.scrollLeft = scrollLeft + clientX - event.clientX;
-      scrollVertContainer.scrollTop = scrollTop + clientY - event.clientY;
 
       const {
         clientX: clientXH,
@@ -197,7 +196,12 @@ const TaskGanttInner: React.FC<TaskGanttProps> = (props) => {
             ref={ganttSVGRef}
           >
             <GanttToday {...ganttTodayProps} />
-            <rect ref={contentRef} width={"100%"} height={"100%"} fill={"transparent"} />
+            <rect
+              ref={contentRef}
+              width={"100%"}
+              height={"100%"}
+              fill={"transparent"}
+            />
             <TaskGanttContent {...barProps} />
           </svg>
         </div>
