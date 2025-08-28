@@ -73,6 +73,8 @@ export interface TaskGanttContentProps extends GanttTaskBarActions {
   isRelationChangeable?: (task: Task) => boolean;
   taskBarMovingAction: (task: RenderTask) => TaskBarMoveAction | null;
   viewMode: ViewMode;
+  showProgress?: boolean;
+  progressColor?: string;
 }
 
 const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
@@ -116,6 +118,8 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
     taskBarMovingAction,
     waitCommitTasks,
     viewMode,
+    showProgress = true,
+    progressColor,
   } = props;
 
   const renderedHolidays = useMemo(() => {
@@ -274,6 +278,8 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
             onDeleteTask={onDeleteTask}
             renderCustomLabel={renderCustomLabel}
             viewMode={viewMode}
+            showProgress={showProgress}
+            progressColor={progressColor}
           />
         </svg>
       );

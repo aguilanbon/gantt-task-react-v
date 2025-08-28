@@ -1,4 +1,4 @@
-import React, { CSSProperties } from "react";
+import React, { CSSProperties, useMemo } from "react";
 
 import styles from "./project.module.css";
 
@@ -19,6 +19,8 @@ type ProjectDisplayProps = {
   x1: number;
   x2: number;
   customStyle?: CSSProperties;
+  showProgress?: boolean;
+  progressColor?: string;
 };
 
 export const ProjectDisplay: React.FC<ProjectDisplayProps> = ({
@@ -26,8 +28,8 @@ export const ProjectDisplay: React.FC<ProjectDisplayProps> = ({
   taskName,
   taskHalfHeight,
   taskHeight,
-  // isSelected,
-  // isCritical,
+  isSelected,
+  isCritical,
   progressWidth,
   progressX,
   taskYOffset,
@@ -36,38 +38,45 @@ export const ProjectDisplay: React.FC<ProjectDisplayProps> = ({
   x2,
   startMoveFullTask,
   customStyle,
+  showProgress = true,
+  progressColor,
 }) => {
   // const barColor = useMemo(() => {
-  //   if (isCritical) {
-  //     if (isSelected) {
-  //       return "var(--gantt-project-background-selected-critical-color)";
-  //     }
+  const barColor = useMemo(() => {
+    if (isCritical) {
+      if (isSelected) {
+        return "var(--gantt-project-background-selected-critical-color)";
+      }
 
-  //     return "var(--gantt-project-background-critical-color)";
-  //   }
+      return "var(--gantt-project-background-critical-color)";
+    }
 
-  //   if (isSelected) {
-  //     return "var(--gantt-project-background-selected-color)";
-  //   }
+    if (isSelected) {
+      return "var(--gantt-project-background-selected-color)";
+    }
 
-  //   return "var(--gantt-project-background-color)";
-  // }, [isSelected, isCritical]);
+    return "var(--gantt-project-background-color)";
+  }, [isSelected, isCritical]);
 
-  // const processColor = useMemo(() => {
-  //   if (isCritical) {
-  //     if (isSelected) {
-  //       return "var(--gantt-project-progress-selected-critical-color)";
-  //     }
+  const processColor = useMemo(() => {
+    if (progressColor) {
+      return progressColor;
+    }
 
-  //     return "var(--gantt-project-progress-critical-color)";
-  //   }
+    if (isCritical) {
+      if (isSelected) {
+        return "var(--gantt-project-progress-selected-critical-color)";
+      }
 
-  //   if (isSelected) {
-  //     return "var(--gantt-project-progress-selected-color)";
-  //   }
+      return "var(--gantt-project-progress-critical-color)";
+    }
 
-  //   return "var(--gantt-project-progress-color)";
-  // }, [isSelected, isCritical]);
+    if (isSelected) {
+      return "var(--gantt-project-progress-selected-color)";
+    }
+
+    return "var(--gantt-project-progress-color)";
+  }, [isSelected, isCritical, progressColor]);
 
   const projectLeftTriangle = [
     x1,
@@ -104,7 +113,7 @@ export const ProjectDisplay: React.FC<ProjectDisplayProps> = ({
       className={styles.projectWrapper}
     >
       <rect
-        // fill={barColor}
+        fill={barColor}
         x={x1}
         width={width}
         y={taskYOffset}
@@ -112,21 +121,20 @@ export const ProjectDisplay: React.FC<ProjectDisplayProps> = ({
         rx={barCornerRadius}
         ry={barCornerRadius}
         className={styles.projectBackground}
-        fill={"unset"}
       />
+      {showProgress && (
+        <rect
+          x={progressX}
+          width={progressWidth}
+          y={taskYOffset}
+          height={taskHeight}
+          ry={barCornerRadius}
+          rx={barCornerRadius}
+          fill={processColor}
+        />
+      )}
       <rect
-        x={progressX}
-        width={progressWidth}
-        y={taskYOffset}
-        height={taskHeight}
-        ry={barCornerRadius}
-        rx={barCornerRadius}
-        // fill={processColor}
-        fill={"unset"}
-      />
-      <rect
-        // fill={barColor}
-        fill={"unset"}
+        fill={barColor}
         x={x1}
         width={width}
         y={taskYOffset}
@@ -138,14 +146,12 @@ export const ProjectDisplay: React.FC<ProjectDisplayProps> = ({
       <polygon
         className={styles.projectTop}
         points={projectLeftTriangle}
-        // fill={barColor}
-        fill={"unset"}
+        fill={barColor}
       />
       <polygon
         className={styles.projectTop}
         points={projectRightTriangle}
-        // fill={barColor}
-        fill={"unset"}
+        fill={barColor}
       />
     </g>
   );

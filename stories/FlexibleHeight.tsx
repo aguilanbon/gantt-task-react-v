@@ -8,7 +8,7 @@ const data: Task[] = [
     end: new Date(2025, 0, 3),
     name: "Task 1",
     id: "1",
-    type: "task" as const,
+    type: "project" as const,
     progress: 45,
     isDisabled: false,
     dependencies: [],
@@ -27,6 +27,7 @@ const data: Task[] = [
     id: "2",
     type: "task" as const,
     progress: 25,
+    parent: "1",
     isDisabled: false,
     dependencies: [
       {
@@ -48,7 +49,7 @@ const data: Task[] = [
     end: new Date(2025, 0, 12),
     name: "Task 3",
     id: "3",
-    type: "task" as const,
+    type: "project" as const,
     progress: 10,
     isDisabled: false,
     dependencies: [
@@ -222,6 +223,7 @@ export const FlexibleHeight = () => {
           todayColor="#5900ff"
           todayLabel="Today"
           dataDateLabel="Data Date"
+          showProgress={false}
         />
       </div>
 

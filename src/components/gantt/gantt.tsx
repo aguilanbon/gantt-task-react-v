@@ -133,6 +133,8 @@ export const Gantt: React.FC<GanttProps> = props => {
     dataDateColor,
     todayLabel = "Today",
     dataDateLabel = "Data Date",
+    showProgress = true,
+    progressColor,
   } = props;
   const ganttSVGRef = useRef<SVGSVGElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -1620,6 +1622,8 @@ export const Gantt: React.FC<GanttProps> = props => {
       taskYOffset,
       visibleTasksMirror,
       viewMode,
+      showProgress,
+      progressColor,
     }),
     [
       viewMode,
@@ -1657,6 +1661,8 @@ export const Gantt: React.FC<GanttProps> = props => {
       changeInProgress?.changedTask?.id,
       changeInProgress?.action,
       handleDeleteTasks,
+      showProgress,
+      progressColor,
     ]
   );
 

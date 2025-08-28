@@ -39,6 +39,8 @@ export const Bar: React.FC<BarProps> = props => {
     x2,
     movingAction,
     ganttRelationEvent,
+    showProgress = true,
+    progressColor,
   } = props;
   const isSmallWidth = useMemo(() => width < 30, [width]);
   const handleHeight = useMemo(() => taskHeight - 2, [taskHeight]);
@@ -113,6 +115,8 @@ export const Bar: React.FC<BarProps> = props => {
           isCritical={isCritical}
           hasChildren={hasChildren}
           startMoveFullTask={startMoveFullTask}
+          showProgress={showProgress}
+          progressColor={progressColor}
         />
       );
     } else {
@@ -131,6 +135,8 @@ export const Bar: React.FC<BarProps> = props => {
           isCritical={isCritical}
           hasChildren={hasChildren}
           startMoveFullTask={startMoveFullTask}
+          showProgress={showProgress}
+          progressColor={progressColor}
         />
       );
     }

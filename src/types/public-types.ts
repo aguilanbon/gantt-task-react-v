@@ -467,6 +467,14 @@ export interface GanttProps {
    * Label text for the data date marker. Defaults to "Data Date".
    */
   dataDateLabel?: string;
+  /**
+   * Show/hide progress bar on task bars. Defaults to true.
+   */
+  showProgress?: boolean;
+  /**
+   * Custom color for progress bars. If not provided, theme progress colors are used.
+   */
+  progressColor?: string;
 }
 
 export interface GanttTaskBarActions {

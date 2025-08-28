@@ -1,4 +1,4 @@
-import React, { CSSProperties } from "react";
+import React, { CSSProperties, useMemo } from "react";
 
 import style from "./bar.module.css";
 import { TaskId } from "../../../types";
@@ -18,14 +18,16 @@ type BarDisplayProps = {
   x: number;
   y: number;
   customStyle?: CSSProperties;
+  showProgress?: boolean;
+  progressColor?: string;
 };
 
 export const BarDisplay: React.FC<BarDisplayProps> = ({
   taskId,
   barCornerRadius,
-  // isCritical,
-  // isSelected,
-  // hasChildren,
+  isCritical,
+  isSelected,
+  hasChildren,
   height,
   progressWidth,
   progressX,
@@ -34,70 +36,76 @@ export const BarDisplay: React.FC<BarDisplayProps> = ({
   x,
   y,
   customStyle,
+  showProgress = true,
+  progressColor,
 }) => {
-  // const processColor = useMemo(() => {
-  //   if (isCritical) {
-  //     if (hasChildren) {
-  //       if (isSelected) {
-  //         return "var(--gantt-group-progress-selected-critical-color)";
-  //       }
+  const processColor = useMemo(() => {
+    if (progressColor) {
+      return progressColor;
+    }
 
-  //       return "var(--gantt-group-progress-critical-color)";
-  //     }
+    if (isCritical) {
+      if (hasChildren) {
+        if (isSelected) {
+          return "var(--gantt-group-progress-selected-critical-color)";
+        }
 
-  //     if (isSelected) {
-  //       return "var(--gantt-bar-progress-selected-critical-color)";
-  //     }
+        return "var(--gantt-group-progress-critical-color)";
+      }
 
-  //     return "var(--gantt-bar-progress-critical-color)";
-  //   }
+      if (isSelected) {
+        return "var(--gantt-bar-progress-selected-critical-color)";
+      }
 
-  //   if (hasChildren) {
-  //     if (isSelected) {
-  //       return "var(--gantt-group-progress-selected-color)";
-  //     }
+      return "var(--gantt-bar-progress-critical-color)";
+    }
 
-  //     return "var(--gantt-group-progress-color)";
-  //   }
+    if (hasChildren) {
+      if (isSelected) {
+        return "var(--gantt-group-progress-selected-color)";
+      }
 
-  //   if (isSelected) {
-  //     return "var(--gantt-bar-progress-selected-color)";
-  //   }
+      return "var(--gantt-group-progress-color)";
+    }
 
-  //   return "var(--gantt-bar-progress-color)";
-  // }, [isSelected, isCritical, hasChildren]);
+    if (isSelected) {
+      return "var(--gantt-bar-progress-selected-color)";
+    }
 
-  // const barColor = useMemo(() => {
-  //   if (isCritical) {
-  //     if (hasChildren) {
-  //       if (isSelected) {
-  //         return "var(--gantt-group-background-selected-critical-color)";
-  //       }
+    return "var(--gantt-bar-progress-color)";
+  }, [isSelected, isCritical, hasChildren, progressColor]);
 
-  //       return "var(--gantt-group-background-critical-color)";
-  //     }
+  const barColor = useMemo(() => {
+    if (isCritical) {
+      if (hasChildren) {
+        if (isSelected) {
+          return "var(--gantt-group-background-selected-critical-color)";
+        }
 
-  //     if (isSelected) {
-  //       return "var(--gantt-bar-background-selected-critical-color)";
-  //     }
+        return "var(--gantt-group-background-critical-color)";
+      }
 
-  //     return "var(--gantt-bar-background-critical-color)";
-  //   }
+      if (isSelected) {
+        return "var(--gantt-bar-background-selected-critical-color)";
+      }
 
-  //   if (hasChildren) {
-  //     if (isSelected) {
-  //       return "var(--gantt-group-background-selected-color)";
-  //     }
+      return "var(--gantt-bar-background-critical-color)";
+    }
 
-  //     return "var(--gantt-group-background-color)";
-  //   }
+    if (hasChildren) {
+      if (isSelected) {
+        return "var(--gantt-group-background-selected-color)";
+      }
 
-  //   if (isSelected) {
-  //     return "var(--gantt-bar-background-selected-color)";
-  //   }
+      return "var(--gantt-group-background-color)";
+    }
 
-  //   return "var(--gantt-bar-background-color)";
-  // }, [isSelected, isCritical, hasChildren]);
+    if (isSelected) {
+      return "var(--gantt-bar-background-selected-color)";
+    }
+
+    return "var(--gantt-bar-background-color)";
+  }, [isSelected, isCritical, hasChildren]);
 
   return (
     <g
@@ -122,24 +130,20 @@ export const BarDisplay: React.FC<BarDisplayProps> = ({
         height={height}
         ry={barCornerRadius}
         rx={barCornerRadius}
-        fill={"unset"}
+        fill={barColor}
         className={style.barBackground}
-        // style={{
-        //   fill: barColor,
-        // }}
       />
-      <rect
-        x={progressX}
-        width={progressWidth}
-        y={y}
-        height={height}
-        ry={barCornerRadius}
-        rx={barCornerRadius}
-        fill={"unset"}
-        // style={{
-        //   fill: processColor,
-        // }}
-      />
+      {showProgress && (
+        <rect
+          x={progressX}
+          width={progressWidth}
+          y={y}
+          height={height}
+          ry={barCornerRadius}
+          rx={barCornerRadius}
+          fill={processColor}
+        />
+      )}
     </g>
   );
 };
