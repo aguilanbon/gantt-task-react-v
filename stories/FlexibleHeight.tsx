@@ -190,7 +190,7 @@ export const FlexibleHeight = () => {
           backgroundColor: "#f9f9f9",
         }}
       >
-        <Gantt tasks={allTasks} viewMode={ViewMode.Day} />
+        <Gantt tasks={allTasks} viewMode={ViewMode.Day} rowHeight={50} />
       </div>
 
       <div style={{ marginTop: "20px" }}>

@@ -303,8 +303,7 @@ export interface GanttProps {
   /**
    * Language
    */
-  language?:string  
-  
+  language?: string;
 
   /**
    * Theme
@@ -436,6 +435,10 @@ export interface GanttProps {
    * Move dates of tasks to working days during change
    */
   isAdjustToWorkingDates?: boolean;
+  /**
+   * Force row height (in pixels) for each single row. If not provided theme distances.rowHeight is used.
+   */
+  rowHeight?: number;
 }
 
 export interface GanttTaskBarActions {

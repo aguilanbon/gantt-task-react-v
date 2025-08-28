@@ -125,13 +125,21 @@ export const Gantt: React.FC<GanttProps> = props => {
     viewMode = ViewMode.Day,
     locale: clientLocale,
     language,
+    rowHeight,
   } = props;
   const ganttSVGRef = useRef<SVGSVGElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const taskListRef = useRef<HTMLDivElement>(null);
   const locale = useMemo(() => clientLocale ?? GANTT_EN_LOCALE, [clientLocale]);
   const theme = useMemo(() => buildGanttTheme(clientTheme), [clientTheme]);
-  const { distances, dateFormats, rtl } = theme;
+  const { dateFormats, rtl } = theme;
+  const distances = useMemo(
+    () => ({
+      ...theme.distances,
+      rowHeight: rowHeight ?? theme.distances.rowHeight,
+    }),
+    [theme, rowHeight]
+  );
   const [waitCommitTasks, setWaitCommitTasks] = useState(false);
 
   const taskBar = useMemo(() => {
