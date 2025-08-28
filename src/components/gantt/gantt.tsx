@@ -126,6 +126,13 @@ export const Gantt: React.FC<GanttProps> = props => {
     locale: clientLocale,
     language,
     rowHeight,
+    showTodayLine = true,
+    showDataDateLine = false,
+    dataDate = null,
+    todayColor,
+    dataDateColor,
+    todayLabel = "Today",
+    dataDateLabel = "Data Date",
   } = props;
   const ganttSVGRef = useRef<SVGSVGElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -1517,6 +1524,13 @@ export const Gantt: React.FC<GanttProps> = props => {
       rtl,
       startDate,
       viewMode,
+      showTodayLine,
+      showDataDateLine,
+      dataDate,
+      todayColor,
+      dataDateColor,
+      todayLabel,
+      dataDateLabel,
     }),
     [
       additionalLeftSpace,
@@ -1526,6 +1540,13 @@ export const Gantt: React.FC<GanttProps> = props => {
       rtl,
       startDate,
       viewMode,
+      showTodayLine,
+      showDataDateLine,
+      dataDate,
+      todayColor,
+      dataDateColor,
+      todayLabel,
+      dataDateLabel,
     ]
   );
 

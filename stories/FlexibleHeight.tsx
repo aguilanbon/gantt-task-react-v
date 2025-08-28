@@ -4,8 +4,8 @@ import { Gantt } from "../src";
 
 const data: Task[] = [
   {
-    start: new Date(2023, 0, 1),
-    end: new Date(2023, 0, 3),
+    start: new Date(2025, 0, 1),
+    end: new Date(2025, 0, 3),
     name: "Task 1",
     id: "1",
     type: "task" as const,
@@ -17,12 +17,12 @@ const data: Task[] = [
     comparisonDates: {
       // comparison finished earlier than main task
       start: new Date(2022, 11, 31),
-      end: new Date(2023, 0, 2),
+      end: new Date(2025, 0, 2),
     },
   },
   {
-    start: new Date(2023, 0, 4),
-    end: new Date(2023, 0, 8),
+    start: new Date(2025, 0, 4),
+    end: new Date(2025, 0, 8),
     name: "Task 2",
     id: "2",
     type: "task" as const,
@@ -39,13 +39,13 @@ const data: Task[] = [
     style: {},
     comparisonDates: {
       // comparison aligns with main task (plan)
-      start: new Date(2023, 0, 4),
-      end: new Date(2023, 0, 7),
+      start: new Date(2025, 0, 4),
+      end: new Date(2025, 0, 7),
     },
   },
   {
-    start: new Date(2023, 0, 9),
-    end: new Date(2023, 0, 12),
+    start: new Date(2025, 0, 9),
+    end: new Date(2025, 0, 12),
     name: "Task 3",
     id: "3",
     type: "task" as const,
@@ -62,13 +62,13 @@ const data: Task[] = [
     style: {},
     comparisonDates: {
       // comparison ends after main task (warning)
-      start: new Date(2023, 0, 11),
-      end: new Date(2023, 0, 13),
+      start: new Date(2025, 0, 11),
+      end: new Date(2025, 0, 13),
     },
   },
   {
-    start: new Date(2023, 0, 13),
-    end: new Date(2023, 0, 15),
+    start: new Date(2025, 0, 13),
+    end: new Date(2025, 0, 15),
     name: "Task 4",
     id: "4",
     type: "task" as const,
@@ -85,13 +85,13 @@ const data: Task[] = [
     style: {},
     comparisonDates: {
       // in-progress comparison (no end yet)
-      start: new Date(2023, 0, 14),
+      start: new Date(2025, 0, 14),
       end: null,
     },
   },
   {
-    start: new Date(2023, 0, 16),
-    end: new Date(2023, 0, 18),
+    start: new Date(2025, 0, 16),
+    end: new Date(2025, 0, 18),
     name: "Task 5",
     id: "5",
     type: "task" as const,
@@ -108,9 +108,27 @@ const data: Task[] = [
     style: {},
     comparisonDates: {
       // comparison that slightly exceeds the main task
-      start: new Date(2023, 0, 16),
-      end: new Date(2023, 0, 19),
+      start: new Date(2025, 0, 16),
+      end: new Date(2025, 0, 19),
     },
+  },
+  {
+    start: new Date(2025, 7, 16),
+    end: new Date(2025, 8, 18),
+    name: "Task 6",
+    id: "5",
+    type: "task" as const,
+    progress: 90,
+    isDisabled: false,
+    dependencies: [
+      {
+        sourceId: "4",
+        sourceTarget: "endOfTask" as const,
+        ownTarget: "startOfTask" as const,
+      },
+    ],
+    assignees: [],
+    style: {},
   },
 ];
 
@@ -119,9 +137,9 @@ const generateMoreTasks = (): Task[] => {
   const moreTasks: Task[] = [];
   for (let i = 6; i <= 50; i++) {
     const startDay = Math.floor(i / 5) + 10; // Spread tasks across more days
-    const taskStart = new Date(2023, 0, startDay);
+    const taskStart = new Date(2025, 0, startDay);
     const taskEnd = new Date(
-      2023,
+      2025,
       0,
       startDay + Math.floor(Math.random() * 5) + 1
     );
@@ -130,11 +148,11 @@ const generateMoreTasks = (): Task[] => {
     const addComparison = Math.random() < 0.25;
     const comparisonDates = addComparison
       ? {
-          start: new Date(2023, 0, startDay - Math.floor(Math.random() * 3)),
+          start: new Date(2025, 0, startDay - Math.floor(Math.random() * 3)),
           end:
             Math.random() < 0.2
               ? null
-              : new Date(2023, 0, startDay + Math.floor(Math.random() * 4) + 1),
+              : new Date(2025, 0, startDay + Math.floor(Math.random() * 4) + 1),
         }
       : undefined;
 
@@ -190,7 +208,21 @@ export const FlexibleHeight = () => {
           backgroundColor: "#f9f9f9",
         }}
       >
-        <Gantt tasks={allTasks} viewMode={ViewMode.Day} rowHeight={50} />
+        <Gantt
+          tasks={allTasks}
+          viewMode={ViewMode.Day}
+          showDataDateLine={true}
+          dataDate={new Date("2025-01-15")}
+          showTodayLine={true}
+          roundStartDate={date => date}
+          roundEndDate={date => date}
+          timeStep={1}
+          isAdjustToWorkingDates={false}
+          dataDateColor="#ffcc00"
+          todayColor="#5900ff"
+          todayLabel="Today"
+          dataDateLabel="Data Date"
+        />
       </div>
 
       <div style={{ marginTop: "20px" }}>

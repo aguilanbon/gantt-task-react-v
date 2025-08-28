@@ -439,6 +439,34 @@ export interface GanttProps {
    * Force row height (in pixels) for each single row. If not provided theme distances.rowHeight is used.
    */
   rowHeight?: number;
+  /**
+   * Show vertical line for current day on the chart
+   */
+  showTodayLine?: boolean;
+  /**
+   * Show vertical line for a custom 'data date' on the chart
+   */
+  showDataDateLine?: boolean;
+  /**
+   * Custom date to render as data date line when `showDataDateLine` is true
+   */
+  dataDate?: Date | null;
+  /**
+   * Color used for the today line, pin and label. If not provided, theme calendarTodayColor is used.
+   */
+  todayColor?: string;
+  /**
+   * Color used for the data date line, pin and label. If not provided, theme calendarTodayColor is used.
+   */
+  dataDateColor?: string;
+  /**
+   * Label text for the today marker. Defaults to "Today".
+   */
+  todayLabel?: string;
+  /**
+   * Label text for the data date marker. Defaults to "Data Date".
+   */
+  dataDateLabel?: string;
 }
 
 export interface GanttTaskBarActions {
