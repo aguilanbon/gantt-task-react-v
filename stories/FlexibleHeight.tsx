@@ -226,6 +226,81 @@ export const FlexibleHeight = () => {
           showProgress={false}
         />
       </div>
+      <div
+        style={{
+          height: containerHeight,
+          border: "2px solid #ccc",
+          borderRadius: "8px",
+          backgroundColor: "#f9f9f9",
+        }}
+      >
+        <Gantt
+          tasks={allTasks}
+          viewMode={ViewMode.Week}
+          showDataDateLine={true}
+          dataDate={new Date("2025-01-15")}
+          showTodayLine={true}
+          roundStartDate={date => date}
+          roundEndDate={date => date}
+          timeStep={1}
+          isAdjustToWorkingDates={false}
+          dataDateColor="#ffcc00"
+          todayColor="#5900ff"
+          todayLabel="Today"
+          dataDateLabel="Data Date"
+          showProgress={false}
+        />
+      </div>
+      <div
+        style={{
+          height: containerHeight,
+          border: "2px solid #ccc",
+          borderRadius: "8px",
+          backgroundColor: "#f9f9f9",
+        }}
+      >
+        <Gantt
+          tasks={allTasks}
+          viewMode={ViewMode.Month}
+          showDataDateLine={true}
+          dataDate={new Date("2025-01-15")}
+          showTodayLine={true}
+          roundStartDate={date => date}
+          roundEndDate={date => date}
+          timeStep={1}
+          isAdjustToWorkingDates={false}
+          dataDateColor="#ffcc00"
+          todayColor="#5900ff"
+          todayLabel="Today"
+          dataDateLabel="Data Date"
+          showProgress={false}
+        />
+      </div>
+      <div
+        style={{
+          height: containerHeight,
+          border: "2px solid #ccc",
+          borderRadius: "8px",
+          backgroundColor: "#f9f9f9",
+        }}
+      >
+        <Gantt
+          tasks={allTasks}
+          viewMode={ViewMode.Year}
+          showDataDateLine={true}
+          dataDate={new Date("2025-01-15")}
+          showTodayLine={true}
+          roundStartDate={date => date}
+          roundEndDate={date => date}
+          timeStep={1}
+          isAdjustToWorkingDates={false}
+          dataDateColor="#ffcc00"
+          todayColor="#5900ff"
+          todayLabel="Today"
+          dataDateLabel="Data Date"
+          showProgress={false}
+        />
+      </div>
 
       <div style={{ marginTop: "20px" }}>
         <h3>Features Demonstrated:</h3>
