@@ -91,8 +91,6 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
     allowMoveTaskBar,
     viewMode,
     renderCustomLabel,
-    showProgress = true,
-    progressColor,
   } = props;
 
   const taskRootRef = useRef<SVGGElement>(null);
