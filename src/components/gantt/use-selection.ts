@@ -5,7 +5,8 @@ import {
   CheckTaskIdExistsAtLevel,
   RowIndexToTaskMap,
   RenderTask,
-  TaskToRowIndexMap, TaskId,
+  TaskToRowIndexMap,
+  TaskId,
 } from "../../types";
 
 const initialValue = {};
@@ -14,7 +15,7 @@ export const useSelection = (
   taskToRowIndexMap: TaskToRowIndexMap,
   rowIndexToTaskMap: RowIndexToTaskMap,
   checkTaskIdExists: CheckTaskIdExistsAtLevel,
-  onSelectTaskIds?: (taskIds: TaskId[]) => void,
+  onSelectTaskIds?: (taskIds: TaskId[]) => void
 ) => {
   const [cutIdsMirror, setCutIdsMirror] =
     useState<Readonly<Record<string, true>>>(initialValue);
@@ -65,7 +66,7 @@ export const useSelection = (
 
       lastSelectedIdRef.current = taskId;
     },
-    [],
+    []
   );
 
   const selectTasksFromLastSelected = useCallback(
@@ -129,7 +130,7 @@ export const useSelection = (
 
       lastSelectedIdRef.current = taskId;
     },
-    [rowIndexToTaskMap, taskToRowIndexMap, toggleTask],
+    [rowIndexToTaskMap, taskToRowIndexMap, toggleTask]
   );
 
   const resetSelectedTasks = useCallback(() => {
@@ -151,9 +152,14 @@ export const useSelection = (
         return;
       }
 
-      selectTask(taskId);
+      // Check if task is already selected - if so, deselect it; otherwise select it
+      if (selectedIdsMirror[taskId]) {
+        toggleTask(taskId); // This will deselect since it's already selected
+      } else {
+        selectTask(taskId);
+      }
     },
-    [selectTask, selectTasksFromLastSelected, toggleTask],
+    [selectTask, selectTasksFromLastSelected, toggleTask, selectedIdsMirror]
   );
 
   const cutTask = useCallback((task: RenderTask) => {
@@ -181,18 +187,20 @@ export const useSelection = (
   const checkHasCopyTasks = useCallback(
     () =>
       Object.keys(copyIdsMirror).some(taskId => checkTaskIdExists(taskId, 1)),
-    [checkTaskIdExists, copyIdsMirror],
+    [checkTaskIdExists, copyIdsMirror]
   );
 
   const checkHasCutTasks = useCallback(
     () =>
       Object.keys(cutIdsMirror).some(taskId => checkTaskIdExists(taskId, 1)),
-    [checkTaskIdExists, cutIdsMirror],
+    [checkTaskIdExists, cutIdsMirror]
   );
 
   useEffect(() => {
     if (onSelectTaskIds) {
-      const selectedTaskIds = Object.keys(selectedIdsMirror).filter(x => selectedIdsMirror[x]);
+      const selectedTaskIds = Object.keys(selectedIdsMirror).filter(
+        x => selectedIdsMirror[x]
+      );
       onSelectTaskIds(selectedTaskIds);
     }
   }, [onSelectTaskIds, selectedIdsMirror]);
