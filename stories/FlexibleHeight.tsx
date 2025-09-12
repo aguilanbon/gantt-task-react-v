@@ -224,6 +224,16 @@ export const FlexibleHeight = () => {
           todayLabel="Today"
           dataDateLabel="Data Date"
           showProgress={false}
+          taskBar={{
+            taskGanttContextMenuOption: [
+              {
+                label: "Custom Action",
+                action(meta) {
+                  alert(`Custom action on task: ${meta.task.name}`);
+                },
+              },
+            ],
+          }}
         />
       </div>
       <div

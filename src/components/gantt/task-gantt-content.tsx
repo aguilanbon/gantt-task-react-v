@@ -526,6 +526,8 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
     isRelationChangeable,
     visibleTasksMirror,
     onArrowDoubleClick,
+    showProgress,
+    progressColor,
   ]);
 
   return (

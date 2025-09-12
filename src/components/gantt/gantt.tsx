@@ -11,6 +11,7 @@ import {
   ChangeAction,
   CheckTaskIdExistsAtLevel,
   ContextMenuOptionType,
+  ContextMenuType,
   DateSetup,
   Dependency,
   GanttProps,
@@ -502,6 +503,39 @@ export const Gantt: React.FC<GanttProps> = props => {
 
   const { contextMenu, handleCloseContextMenu, handleOpenContextMenu } =
     useContextMenu(wrapperRef, scrollToTask);
+
+  const [ganttContextMenu, setGanttContextMenu] = useState<ContextMenuType>({
+    task: null,
+    x: 0,
+    y: 0,
+  });
+
+  const handleOpenGanttContextMenu = useCallback(
+    (task: RenderTask | null, clientX: number, clientY: number) => {
+      const wrapperNode = wrapperRef.current;
+
+      if (!wrapperNode) {
+        return;
+      }
+
+      const { top, left } = wrapperNode.getBoundingClientRect();
+
+      setGanttContextMenu({
+        task: task || ({ id: "__gantt_area__", type: "empty" } as RenderTask), // Use a dummy task for gantt area
+        x: clientX - left,
+        y: clientY - top,
+      });
+    },
+    [wrapperRef]
+  );
+
+  const handleCloseGanttContextMenu = useCallback(() => {
+    setGanttContextMenu({
+      task: null,
+      x: 0,
+      y: 0,
+    });
+  }, []);
 
   const [dependencyMap, dependentMap, dependencyMarginsMap] = useMemo(
     () =>
@@ -1462,6 +1496,14 @@ export const Gantt: React.FC<GanttProps> = props => {
     ];
   }, [taskList.contextMenuOptions, locale]);
 
+  const ganttContextMenuOptions = useMemo<ContextMenuOptionType[]>(() => {
+    if (taskBar.taskGanttContextMenuOption) {
+      return taskBar.taskGanttContextMenuOption;
+    }
+
+    return [createPasteOption(locale)];
+  }, [taskBar.taskGanttContextMenuOption, locale]);
+
   /**
    * Prevent crash after task delete
    */
@@ -1760,6 +1802,9 @@ export const Gantt: React.FC<GanttProps> = props => {
               verticalScrollbarRef={verticalScrollbarRef}
               onVerticalScrollbarScrollX={onVerticalScrollbarScrollX}
               verticalGanttContainerRef={verticalGanttContainerRef}
+              onOpenGanttContextMenu={(clientX: number, clientY: number) => {
+                handleOpenGanttContextMenu(null, clientX, clientY);
+              }}
             />
 
             {tooltipTaskFromMap && (
@@ -1792,6 +1837,18 @@ export const Gantt: React.FC<GanttProps> = props => {
                 handleAction={handleAction}
                 handleCloseContextMenu={handleCloseContextMenu}
                 options={contextMenuOptions}
+              />
+            )}
+
+            {ganttContextMenu.task && !waitCommitTasks && (
+              <ContextMenu
+                checkHasCopyTasks={checkHasCopyTasks}
+                checkHasCutTasks={checkHasCutTasks}
+                contextMenu={ganttContextMenu}
+                distances={distances}
+                handleAction={handleAction}
+                handleCloseContextMenu={handleCloseGanttContextMenu}
+                options={ganttContextMenuOptions}
               />
             )}
 

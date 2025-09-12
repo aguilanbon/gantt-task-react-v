@@ -20,6 +20,7 @@ export interface TaskGanttProps extends GanttTaskBarActions {
   verticalScrollbarRef: RefObject<HTMLDivElement>;
   onVerticalScrollbarScrollX: (event: SyntheticEvent<HTMLDivElement>) => void;
   verticalGanttContainerRef: RefObject<HTMLDivElement>;
+  onOpenGanttContextMenu?: (clientX: number, clientY: number) => void;
 }
 
 interface MouseDragState {
@@ -47,6 +48,7 @@ const TaskGanttInner: React.FC<TaskGanttProps> = props => {
     onVerticalScrollbarScrollX,
     verticalGanttContainerRef,
     verticalScrollbarRef,
+    onOpenGanttContextMenu,
   } = props;
   const contentRef = React.useRef<SVGRectElement>(null);
   const moveStateVertRef = useRef<MouseDragState | null>(null);
@@ -194,6 +196,12 @@ const TaskGanttInner: React.FC<TaskGanttProps> = props => {
             height={ganttFullHeight}
             fontFamily={"var(--gantt-font-family)"}
             ref={ganttSVGRef}
+            onContextMenu={event => {
+              event.preventDefault();
+              if (onOpenGanttContextMenu) {
+                onOpenGanttContextMenu(event.clientX, event.clientY);
+              }
+            }}
           >
             <GanttToday {...ganttTodayProps} />
             <rect

@@ -263,6 +263,11 @@ export interface GanttTaskBarProps extends GanttTaskBarActions {
   TooltipContent?: ComponentType<{ task: Task }>;
 
   /**
+   * Context menu options for right-click on the gantt chart area
+   */
+  taskGanttContextMenuOption?: ContextMenuOptionType[];
+
+  /**
    * Invokes on double-click on the relation arrow between tasks
    */
   onArrowDoubleClick?: OnArrowDoubleClick;
