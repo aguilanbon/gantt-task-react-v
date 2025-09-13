@@ -128,8 +128,6 @@ export function ContextMenu(props: ContextMenuProps): ReactElement {
   //   handleCloseContextMenu();
   // });
 
-
-
   return (
     <>
       <div
@@ -163,24 +161,31 @@ export function ContextMenu(props: ContextMenuProps): ReactElement {
           }}
           {...getFloatingProps()}
         >
-          {task.type !== "project" ? (
-            optionsForRender.map((option, index) => (
-              <MenuOption
-                onClose={handleCloseContextMenu}
-                distances={distances}
-                handleAction={handleOptionAction}
-                option={option}
-                key={index}
-              />
-            ))
-          ) : optionsForRender[2]?.checkIsAvailable ? (
+          {/* NOTE: Previously project tasks rendered only a single hard-coded option (index 2).
+              This caused the context menu to appear empty (and thus look broken) if that index
+              wasn't present or available. We now render all filtered options for every task type.
+              If in the future certain options should be hidden for projects, add per-option
+              checkIsAvailable logic instead of hard-coded indexes. */}
+          {optionsForRender.map((option, index) => (
             <MenuOption
               onClose={handleCloseContextMenu}
               distances={distances}
               handleAction={handleOptionAction}
-              option={optionsForRender[2]}
+              option={option}
+              key={index}
             />
-          ) : null}
+          ))}
+          {optionsForRender.length === 0 && (
+            <div
+              style={{
+                padding: "6px 12px",
+                color: "var(--gantt-context-menu-empty-color, #666)",
+                fontSize: "var(--gantt-font-size)",
+              }}
+            >
+              —
+            </div>
+          )}
         </div>
       )}
     </>
