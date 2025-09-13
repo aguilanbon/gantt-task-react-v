@@ -140,6 +140,7 @@ export const Gantt: React.FC<GanttProps> = props => {
   const ganttSVGRef = useRef<SVGSVGElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const taskListRef = useRef<HTMLDivElement>(null);
+  const taskListHorizontalScrollRef = useRef<HTMLDivElement>(null);
   const locale = useMemo(() => clientLocale ?? GANTT_EN_LOCALE, [clientLocale]);
   const theme = useMemo(() => buildGanttTheme(clientTheme), [clientTheme]);
   const { dateFormats, rtl } = theme;
@@ -1785,7 +1786,10 @@ export const Gantt: React.FC<GanttProps> = props => {
           >
             {/* {task-list-table-columns.length > 0 && <TaskList {...tableProps} />} */}
             {(!columnsProp || columnsProp.length > 0) && (
-              <TaskList {...renderTaskListProps} />
+              <TaskList
+                {...renderTaskListProps}
+                taskListHorizontalScrollRef={taskListHorizontalScrollRef}
+              />
             )}
 
             <TaskGantt
@@ -1837,6 +1841,7 @@ export const Gantt: React.FC<GanttProps> = props => {
                 handleAction={handleAction}
                 handleCloseContextMenu={handleCloseContextMenu}
                 options={contextMenuOptions}
+                boundaryElement={taskListHorizontalScrollRef}
               />
             )}
 
@@ -1849,6 +1854,7 @@ export const Gantt: React.FC<GanttProps> = props => {
                 handleAction={handleAction}
                 handleCloseContextMenu={handleCloseGanttContextMenu}
                 options={ganttContextMenuOptions}
+                boundaryElement={verticalGanttContainerRef}
               />
             )}
 

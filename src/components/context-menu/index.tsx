@@ -1,4 +1,4 @@
-import type { ReactElement } from "react";
+import type { ReactElement, RefObject } from "react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { autoUpdate, flip, shift } from "@floating-ui/dom";
@@ -32,6 +32,8 @@ type ContextMenuProps = {
   ) => void;
   handleCloseContextMenu: () => void;
   options: ContextMenuOptionType[];
+  /** Optional boundary element to contain the context menu (like tooltips) */
+  boundaryElement?: RefObject<HTMLElement>;
 };
 
 export function ContextMenu(props: ContextMenuProps): ReactElement {
@@ -92,7 +94,13 @@ export function ContextMenu(props: ContextMenuProps): ReactElement {
     },
     strategy: "absolute",
     placement: "bottom-start",
-    middleware: [flip(), shift()],
+    middleware: [
+      flip(),
+      shift({
+        boundary: props.boundaryElement?.current || undefined,
+        padding: 8,
+      }),
+    ],
     whileElementsMounted: autoUpdate,
   });
 

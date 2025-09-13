@@ -27,6 +27,8 @@ import { checkHasChildren } from "../../helpers/check-has-children";
 
 export type TaskListProps = {
   ganttRef: RefObject<HTMLDivElement>;
+  /** Ref to the horizontal scroll wrapper (used for containing popups) */
+  taskListHorizontalScrollRef?: RefObject<HTMLDivElement>;
   allowReorderTask?: AllowReorderTask;
   canReorderTasks?: boolean;
   canResizeColumns?: boolean;
@@ -98,6 +100,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
   selectedIdsMirror,
   ganttRef,
   taskListContainerRef,
+  taskListHorizontalScrollRef,
   taskListRef,
   tasks,
   onResizeColumn,
@@ -198,6 +201,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
   return (
     <div className={styles.taskListRoot} ref={taskListRef}>
       <div
+        ref={taskListHorizontalScrollRef}
         className={styles.taskListHorizontalScroll}
         style={{
           width: tableWidth,
