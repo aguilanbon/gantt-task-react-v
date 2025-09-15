@@ -422,6 +422,11 @@ export interface GanttProps {
   onWheel?: (wheelEvent: WheelEvent) => void;
 
   /**
+   * Invokes when user right-clicks a row in the task list. Receives the `task.id` of the clicked row.
+   */
+  onRowContextMenu?: (taskId: string) => void;
+
+  /**
    * Recount descedents of a group task when moving
    */
   isMoveChildsWithParent?: boolean;

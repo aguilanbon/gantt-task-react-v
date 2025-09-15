@@ -224,6 +224,9 @@ export const FlexibleHeight = () => {
           todayLabel="Today"
           dataDateLabel="Data Date"
           showProgress={false}
+          onRowContextMenu={taskId => {
+            alert(`Right-clicked row task id: ${taskId}`);
+          }}
           taskList={{
             contextMenuOptions: [
               {

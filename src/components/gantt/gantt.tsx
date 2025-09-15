@@ -116,6 +116,8 @@ export const Gantt: React.FC<GanttProps> = props => {
     onAddTaskAction,
     onEditTaskAction,
     onSelectTaskIds,
+    // Invoked when user right-clicks a row in the task list
+    onRowContextMenu,
     onWheel,
 
     roundEndDate: clientRoundEndDate = defaultRoundEndDate,
@@ -504,6 +506,25 @@ export const Gantt: React.FC<GanttProps> = props => {
 
   const { contextMenu, handleCloseContextMenu, handleOpenContextMenu } =
     useContextMenu(wrapperRef, scrollToTask);
+
+  // When a row is right-clicked we first notify the consumer (if provided)
+  // with the task id, then open the internal context menu.
+  const handleOpenContextMenuForRow = useCallback(
+    (task: RenderTask, clientX: number, clientY: number) => {
+      try {
+        if (onRowContextMenu && task && task.id) {
+          onRowContextMenu(task.id);
+        }
+      } catch (err) {
+        // Prevent consumer errors from breaking internal flow
+        // eslint-disable-next-line no-console
+        console.error(err);
+      }
+
+      handleOpenContextMenu(task, clientX, clientY);
+    },
+    [onRowContextMenu, handleOpenContextMenu]
+  );
 
   const [ganttContextMenu, setGanttContextMenu] = useState<ContextMenuType>({
     task: null,
@@ -1728,7 +1749,7 @@ export const Gantt: React.FC<GanttProps> = props => {
       handleMoveTaskBefore,
       handleMoveTaskAfter,
       handleMoveTasksInside,
-      handleOpenContextMenu,
+      handleOpenContextMenu: handleOpenContextMenuForRow,
       mapTaskToNestedIndex,
       onExpanderClick,
       scrollToBottomStep,
@@ -1758,7 +1779,7 @@ export const Gantt: React.FC<GanttProps> = props => {
       handleMoveTaskAfter,
       handleMoveTaskBefore,
       handleMoveTasksInside,
-      handleOpenContextMenu,
+      handleOpenContextMenuForRow,
       mapTaskToNestedIndex,
       onExpanderClick,
       scrollToBottomStep,
