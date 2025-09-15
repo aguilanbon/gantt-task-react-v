@@ -224,10 +224,34 @@ export const FlexibleHeight = () => {
           todayLabel="Today"
           dataDateLabel="Data Date"
           showProgress={false}
+          taskList={{
+            contextMenuOptions: [
+              {
+                label: "Custom Action",
+                disabled: true,
+                action(meta) {
+                  alert(`Custom action on task: ${meta.task.name}`);
+                },
+              },
+              {
+                label: "Edit Action",
+                action(meta) {
+                  alert(`Custom action on task: ${meta.task.name}`);
+                },
+              },
+            ],
+          }}
           taskBar={{
             taskGanttContextMenuOption: [
               {
                 label: "Custom Action",
+                disabled: true,
+                action(meta) {
+                  alert(`Custom action on task: ${meta.task.name}`);
+                },
+              },
+              {
+                label: "Edit Action",
                 action(meta) {
                   alert(`Custom action on task: ${meta.task.name}`);
                 },

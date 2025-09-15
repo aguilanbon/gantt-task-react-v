@@ -22,20 +22,27 @@ export function MenuOption(props: MenuOptionProps): ReactElement {
     },
     handleAction,
     option,
-    option: { icon, label },
+    option: { icon, label, disabled },
   } = props;
   const onClick = useCallback(
     (e: MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
+      if (disabled) {
+        // ignore clicks on disabled options
+        return;
+      }
+
       handleAction(option);
-      onClose();
+      onClose?.();
     },
-    [onClose, handleAction, option]
+    [onClose, handleAction, option, disabled]
   );
 
   return (
     <button
       className={styles.menuOption}
+      aria-disabled={disabled}
+      disabled={disabled}
       style={{
         height: contextMenuOptionHeight,
         paddingLeft: contextMenuSidePadding,
@@ -49,7 +56,7 @@ export function MenuOption(props: MenuOptionProps): ReactElement {
         style={{
           width: contextMenuIconWidth,
           color: "var(--gantt-context-menu-text-color)",
-          opacity: 0.5,
+          opacity: disabled ? 0.3 : 0.5,
         }}
       >
         {icon}

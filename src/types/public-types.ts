@@ -712,6 +712,10 @@ export type ContextMenuOptionType = {
    * @param meta Metadata for checking
    */
   checkIsAvailable?: (meta: CheckIsAvailableMetaType) => void;
+  /**
+   * Optional flag to render the option as disabled (not clickable)
+   */
+  disabled?: boolean;
   label: ReactNode;
   icon?: ReactNode;
 };

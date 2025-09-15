@@ -25,6 +25,18 @@
   background-color: #eeeeee;
 }
 
+.menuOption[aria-disabled="true"],
+.menuOption:disabled {
+  opacity: 0.6;
+  cursor: default;
+  background-color: transparent;
+}
+
+.menuOption[aria-disabled="true"]:hover,
+.menuOption:disabled:hover {
+  background-color: transparent;
+}
+
 .icon {
   font-size: inherit;
 }
