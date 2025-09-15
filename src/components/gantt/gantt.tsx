@@ -512,8 +512,9 @@ export const Gantt: React.FC<GanttProps> = props => {
   const handleOpenContextMenuForRow = useCallback(
     (task: RenderTask, clientX: number, clientY: number) => {
       try {
-        if (onRowContextMenu && task && task.id) {
-          onRowContextMenu(task.id);
+        if (onRowContextMenu && task) {
+          // Pass the full task object to the consumer
+          onRowContextMenu(task);
         }
       } catch (err) {
         // Prevent consumer errors from breaking internal flow
