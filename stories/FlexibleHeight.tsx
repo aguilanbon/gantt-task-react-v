@@ -286,6 +286,9 @@ export const FlexibleHeight = () => {
           todayLabel="Today"
           dataDateLabel="Data Date"
           showProgress={false}
+          taskList={{
+            contextMenuOptions: [],
+          }}
         />
       </div>
       <div

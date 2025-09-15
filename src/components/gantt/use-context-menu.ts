@@ -14,10 +14,20 @@ export const useContextMenu = (
   });
 
   const handleOpenContextMenu = useCallback(
-    (task: RenderTask, clientX: number, clientY: number) => {
+    (
+      task: RenderTask,
+      clientX: number,
+      clientY: number,
+      options?: readonly unknown[]
+    ) => {
       const wrapperNode = wrapperRef.current;
 
       if (!wrapperNode) {
+        return;
+      }
+
+      // Don't show context menu if no options are provided
+      if (options && options.length === 0) {
         return;
       }
 

@@ -384,6 +384,7 @@ export const Gantt: React.FC<GanttProps> = props => {
     cutSelectedTasks,
     cutTask,
     resetSelectedTasks,
+    selectTask,
     selectTaskOnMouseDown,
     selectedIdsMirror,
   } = useSelection(
@@ -506,26 +507,6 @@ export const Gantt: React.FC<GanttProps> = props => {
 
   const { contextMenu, handleCloseContextMenu, handleOpenContextMenu } =
     useContextMenu(wrapperRef, scrollToTask);
-
-  // When a row is right-clicked we first notify the consumer (if provided)
-  // with the task id, then open the internal context menu.
-  const handleOpenContextMenuForRow = useCallback(
-    (task: RenderTask, clientX: number, clientY: number) => {
-      try {
-        if (onRowContextMenu && task) {
-          // Pass the full task object to the consumer
-          onRowContextMenu(task);
-        }
-      } catch (err) {
-        // Prevent consumer errors from breaking internal flow
-        // eslint-disable-next-line no-console
-        console.error(err);
-      }
-
-      handleOpenContextMenu(task, clientX, clientY);
-    },
-    [onRowContextMenu, handleOpenContextMenu]
-  );
 
   const [ganttContextMenu, setGanttContextMenu] = useState<ContextMenuType>({
     task: null,
@@ -1519,6 +1500,31 @@ export const Gantt: React.FC<GanttProps> = props => {
     ];
   }, [taskList.contextMenuOptions, locale]);
 
+  // When a row is right-clicked we first notify the consumer (if provided)
+  // with the task id, then open the internal context menu.
+  const handleOpenContextMenuForRow = useCallback(
+    (task: RenderTask, clientX: number, clientY: number) => {
+      try {
+        if (onRowContextMenu && task) {
+          // Pass the full task object to the consumer
+          onRowContextMenu(task);
+        }
+      } catch (err) {
+        // Prevent consumer errors from breaking internal flow
+        // eslint-disable-next-line no-console
+        console.error(err);
+      }
+
+      // Select the task when right-clicking to open context menu from task list
+      if (task && task.type !== "empty") {
+        selectTask(task.id);
+      }
+
+      handleOpenContextMenu(task, clientX, clientY, contextMenuOptions);
+    },
+    [onRowContextMenu, handleOpenContextMenu, selectTask, contextMenuOptions]
+  );
+
   const ganttContextMenuOptions = useMemo<ContextMenuOptionType[]>(() => {
     if (taskBar.taskGanttContextMenuOption) {
       return taskBar.taskGanttContextMenuOption;
@@ -1854,18 +1860,20 @@ export const Gantt: React.FC<GanttProps> = props => {
               rtl={rtl}
               verticalScrollbarRef={verticalScrollbarRef}
             />
-            {taskList.enableTableListContextMenu && !waitCommitTasks && (
-              <ContextMenu
-                checkHasCopyTasks={checkHasCopyTasks}
-                checkHasCutTasks={checkHasCutTasks}
-                contextMenu={contextMenu}
-                distances={distances}
-                handleAction={handleAction}
-                handleCloseContextMenu={handleCloseContextMenu}
-                options={contextMenuOptions}
-                boundaryElement={taskListHorizontalScrollRef}
-              />
-            )}
+            {taskList.enableTableListContextMenu &&
+              !waitCommitTasks &&
+              contextMenuOptions.length > 0 && (
+                <ContextMenu
+                  checkHasCopyTasks={checkHasCopyTasks}
+                  checkHasCutTasks={checkHasCutTasks}
+                  contextMenu={contextMenu}
+                  distances={distances}
+                  handleAction={handleAction}
+                  handleCloseContextMenu={handleCloseContextMenu}
+                  options={contextMenuOptions}
+                  boundaryElement={taskListHorizontalScrollRef}
+                />
+              )}
 
             {ganttContextMenu.task && !waitCommitTasks && (
               <ContextMenu
