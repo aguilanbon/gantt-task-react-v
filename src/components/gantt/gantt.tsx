@@ -1516,14 +1516,25 @@ export const Gantt: React.FC<GanttProps> = props => {
       }
 
       // Select the task when right-clicking to open context menu from task list
-      // Only select if there are context menu options available
-      if (task && task.type !== "empty" && contextMenuOptions.length > 0) {
+      // Only select if there are context menu options available and task is not already selected
+      if (
+        task &&
+        task.type !== "empty" &&
+        contextMenuOptions.length > 0 &&
+        !selectedIdsMirror[task.id]
+      ) {
         selectTask(task.id);
       }
 
       handleOpenContextMenu(task, clientX, clientY, contextMenuOptions);
     },
-    [onRowContextMenu, handleOpenContextMenu, selectTask, contextMenuOptions]
+    [
+      onRowContextMenu,
+      handleOpenContextMenu,
+      selectTask,
+      contextMenuOptions,
+      selectedIdsMirror,
+    ]
   );
 
   const ganttContextMenuOptions = useMemo<ContextMenuOptionType[]>(() => {
