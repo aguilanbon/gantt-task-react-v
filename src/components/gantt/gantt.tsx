@@ -1516,7 +1516,8 @@ export const Gantt: React.FC<GanttProps> = props => {
       }
 
       // Select the task when right-clicking to open context menu from task list
-      if (task && task.type !== "empty") {
+      // Only select if there are context menu options available
+      if (task && task.type !== "empty" && contextMenuOptions.length > 0) {
         selectTask(task.id);
       }
 
