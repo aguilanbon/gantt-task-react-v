@@ -723,6 +723,8 @@ export type ContextMenuOptionType = {
   disabled?: boolean;
   label: ReactNode;
   icon?: ReactNode;
+  /** Optional nested submenu options. If present this option will render a nested submenu when hovered. */
+  children?: ContextMenuOptionType[];
 };
 
 export type CheckTaskIdExistsAtLevel = (

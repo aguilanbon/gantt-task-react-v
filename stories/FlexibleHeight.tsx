@@ -230,17 +230,35 @@ export const FlexibleHeight = () => {
           taskList={{
             contextMenuOptions: [
               {
+                label: "Add",
+                action(meta) {},
+              },
+              {
                 label: "Custom Action",
                 disabled: true,
-                action(meta) {
-                  alert(`Custom action on task: ${meta.task.name}`);
-                },
+                action(meta) {},
               },
               {
                 label: "Edit Action",
-                action(meta) {
-                  alert(`Custom action on task: ${meta.task.name}`);
-                },
+                action(meta) {},
+              },
+              {
+                label: "Move Level Position To",
+                action: () => {},
+                children: [
+                  {
+                    label: "Parent A",
+                    action: meta => {
+                      /* move logic */
+                    },
+                  },
+                  {
+                    label: "Parent B",
+                    action: meta => {
+                      /* move logic */
+                    },
+                  },
+                ],
               },
             ],
           }}
