@@ -14,9 +14,15 @@ export const taskXCoordinate = (
   const nextDate = getDateByOffset(startDate, index + 1, viewMode);
 
   const remainderMillis = xDate.getTime() - currentDate.getTime();
+  const intervalDuration = nextDate.getTime() - currentDate.getTime();
+
+  // Prevent division by zero and NaN
   const percentOfInterval =
-    remainderMillis / (nextDate.getTime() - currentDate.getTime());
-  return index * columnWidth + percentOfInterval * columnWidth;
+    intervalDuration === 0 ? 0 : remainderMillis / intervalDuration;
+
+  // Ensure we return a valid number
+  const result = index * columnWidth + percentOfInterval * columnWidth;
+  return isNaN(result) || !isFinite(result) ? 0 : result;
 };
 
 export const taskComparisonXCoordinate = (
@@ -31,8 +37,15 @@ export const taskComparisonXCoordinate = (
   const nextDate = getDateByOffset(startDate, index + 1, viewMode);
 
   const remainderMillis = xDate.getTime() - currentDate.getTime();
-  const percentOfInterval = remainderMillis / (nextDate.getTime() - currentDate.getTime());
-  return index * columnWidth + percentOfInterval * columnWidth;
+  const intervalDuration = nextDate.getTime() - currentDate.getTime();
+
+  // Prevent division by zero and NaN
+  const percentOfInterval =
+    intervalDuration === 0 ? 0 : remainderMillis / intervalDuration;
+
+  // Ensure we return a valid number
+  const result = index * columnWidth + percentOfInterval * columnWidth;
+  return isNaN(result) || !isFinite(result) ? 0 : result;
 };
 
 export const progressWithByParams = (
@@ -41,12 +54,20 @@ export const progressWithByParams = (
   progress: number,
   rtl: boolean
 ): [number, number] => {
-  const progressWidth = Math.max((taskX2 - taskX1) * progress * 0.01, 0);
+  // Ensure we have valid inputs
+  const safeTaskX1 = isNaN(taskX1) || !isFinite(taskX1) ? 0 : taskX1;
+  const safeTaskX2 = isNaN(taskX2) || !isFinite(taskX2) ? 0 : taskX2;
+  const safeProgress = isNaN(progress) || !isFinite(progress) ? 0 : progress;
+
+  const progressWidth = Math.max(
+    (safeTaskX2 - safeTaskX1) * safeProgress * 0.01,
+    0
+  );
   let progressX: number;
   if (rtl) {
-    progressX = taskX2 - progressWidth;
+    progressX = safeTaskX2 - progressWidth;
   } else {
-    progressX = taskX1;
+    progressX = safeTaskX1;
   }
   return [progressWidth, progressX];
 };
@@ -74,7 +95,15 @@ const dateByX = (
   xStep: number,
   timeStep: number
 ) => {
-  let newDate = new Date(((x - taskX) / xStep) * timeStep + taskDate.getTime());
+  // Validate inputs to prevent NaN propagation
+  const safeX = isNaN(x) || !isFinite(x) ? 0 : x;
+  const safeTaskX = isNaN(taskX) || !isFinite(taskX) ? 0 : taskX;
+  const safeXStep = isNaN(xStep) || !isFinite(xStep) || xStep === 0 ? 1 : xStep;
+  const safeTimeStep = isNaN(timeStep) || !isFinite(timeStep) ? 0 : timeStep;
+
+  let newDate = new Date(
+    ((safeX - safeTaskX) / safeXStep) * safeTimeStep + taskDate.getTime()
+  );
   newDate = new Date(
     newDate.getTime() +
       (newDate.getTimezoneOffset() - taskDate.getTimezoneOffset()) * 60000

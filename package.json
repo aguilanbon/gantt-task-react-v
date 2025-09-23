@@ -1,6 +1,6 @@
 {
   "name": "gantt-task-react-v",
-  "version": "1.2.3",
+  "version": "1.3.6",
   "description": "Interactive Gantt Chart for React with TypeScript.",
   "author": "aguilanbon",
   "homepage": "https://github.com/aguilanbon/gantt-task-react-v",
@@ -43,8 +43,9 @@
     "@floating-ui/dom": "1.6.3",
     "@floating-ui/react": "0.26.11",
     "date-fns": "3.6.0",
-    "i18next": "^24.0.5",
-    "react-i18next": "^15.1.3"
+    "i18next": "^25.5.2",
+    "react-i18next": "^15.7.3",
+    "react-window": "^2.1.1"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^19.0.0-rc",
@@ -61,11 +62,11 @@
     "@storybook/addon-onboarding": "8.2.10",
     "@storybook/blocks": "8.2.10",
     "@storybook/cli": "8.2.10",
+    "@storybook/core-server": "8.2.10",
+    "@storybook/jest": "0.2.3",
     "@storybook/react": "8.2.10",
     "@storybook/react-vite": "8.2.10",
     "@storybook/test": "8.2.10",
-    "@storybook/core-server": "8.2.10",
-    "@storybook/jest": "0.2.3",
     "@storybook/test-runner": "0.23.0",
     "@storybook/testing-library": "^0.2.2",
     "@testing-library/jest-dom": "^6.4.2",
@@ -75,6 +76,7 @@
     "@types/node": "^20.12.4",
     "@types/react": "^18.2.74",
     "@types/react-dom": "^18.2.24",
+    "@types/react-window": "^1.8.8",
     "@typescript-eslint/eslint-plugin": "^7.5.0",
     "@typescript-eslint/parser": "^7.5.0",
     "@vitejs/plugin-react": "4.2.1",

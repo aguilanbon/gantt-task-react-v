@@ -232,13 +232,33 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
         comparisonDates,
       } = getTaskCoordinates(task);
 
+      // Ensure all coordinates are valid numbers
+      const safeContainerX =
+        isNaN(containerX) || !isFinite(containerX) ? 0 : containerX;
+      const safeContainerWidth =
+        isNaN(containerWidth) || !isFinite(containerWidth)
+          ? 0
+          : Math.max(containerWidth, 0);
+      const safeWidth =
+        isNaN(width) || !isFinite(width) ? 10 : Math.max(width, 1);
+      const safeLevelY = isNaN(levelY) || !isFinite(levelY) ? 0 : levelY;
+      const safeProgressWidth =
+        isNaN(progressWidth) || !isFinite(progressWidth)
+          ? 0
+          : Math.max(progressWidth, 0);
+      const safeInnerX1 = isNaN(innerX1) || !isFinite(innerX1) ? 0 : innerX1;
+      const safeInnerX2 =
+        isNaN(innerX2) || !isFinite(innerX2)
+          ? safeInnerX1 + safeWidth
+          : innerX2;
+
       tasksRes.push(
         <svg
           id={task.id}
           className={`${styles.TaskItemWrapper} TaskItemWrapper`}
-          x={Math.max(containerX + (additionalLeftSpace || 0), 0)}
-          y={levelY}
-          width={Math.max(containerWidth, 0)}
+          x={Math.max(safeContainerX + (additionalLeftSpace || 0), 0)}
+          y={safeLevelY}
+          width={Math.max(safeContainerWidth, 0)}
           height={fullRowHeight}
           key={key}
         >
@@ -246,14 +266,14 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
             movingAction={taskBarMovingAction(task)}
             allowMoveTaskBar={allowMoveTaskBar}
             hasChildren={checkHasChildren(task, childTasksMap)}
-            progressWidth={progressWidth}
-            progressX={rtl ? innerX2 : innerX1}
+            progressWidth={safeProgressWidth}
+            progressX={rtl ? safeInnerX2 : safeInnerX1}
             onSelectTaskOnMouseDown={selectTaskOnMouseDown}
             task={task}
             taskYOffset={taskYOffset}
-            width={width}
-            x1={innerX1}
-            x2={innerX2}
+            width={safeWidth}
+            x1={safeInnerX1}
+            x2={safeInnerX2}
             distances={distances}
             taskHeight={taskHeight}
             taskHalfHeight={taskHalfHeight}
@@ -285,15 +305,33 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
       );
 
       if (task.comparisonDates && comparisonDates) {
+        // Validate comparison dates coordinates
+        const safeComparisonX =
+          isNaN(comparisonDates.x) || !isFinite(comparisonDates.x)
+            ? 0
+            : comparisonDates.x;
+        const safeComparisonY =
+          isNaN(comparisonDates.y) || !isFinite(comparisonDates.y)
+            ? safeLevelY
+            : comparisonDates.y;
+        const safeComparisonWidth =
+          isNaN(comparisonDates.width) || !isFinite(comparisonDates.width)
+            ? 0
+            : Math.max(comparisonDates.width, 0);
+        const safeComparisonHeight =
+          isNaN(comparisonDates.height) || !isFinite(comparisonDates.height)
+            ? 0
+            : Math.max(comparisonDates.height, 0);
+
         tasksRes.push(
           <svg
             id={task.id + "_comparison"}
             key={key + "_comparison"}
             className={"TaskItemWrapperComparison"}
-            x={Math.max(comparisonDates.x + (additionalLeftSpace || 0), 0)}
-            y={comparisonDates.y}
-            width={comparisonDates.width}
-            height={comparisonDates.height * 2}
+            x={Math.max(safeComparisonX + (additionalLeftSpace || 0), 0)}
+            y={safeComparisonY}
+            width={safeComparisonWidth}
+            height={safeComparisonHeight * 2}
           >
             <BarComparison
               inProgress={!task.comparisonDates.end}
@@ -313,8 +351,8 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
                 task.comparisonDates.start.getTime() > task.start.getTime()
               }
               barCornerRadius={distances.barCornerRadius}
-              height={comparisonDates.height}
-              width={comparisonDates.width}
+              height={safeComparisonHeight}
+              width={safeComparisonWidth}
               borderHeight={distances.barComparisonTaskBorderHeight}
               yOffset={distances.barComparisonTaskYOffset}
               task={task}
@@ -371,16 +409,39 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
 
               const { x1: fromX1, x2: fromX2 } = getTaskCoordinates(source);
 
+              // Ensure arrow coordinates are valid
+              const safeFromX1 =
+                isNaN(fromX1) || !isFinite(fromX1) ? 0 : fromX1;
+              const safeFromX2 =
+                isNaN(fromX2) || !isFinite(fromX2) ? safeFromX1 + 10 : fromX2;
+              const safeTaskX1 =
+                isNaN(taskX1) || !isFinite(taskX1) ? 0 : taskX1;
+              const safeTaskX2 =
+                isNaN(taskX2) || !isFinite(taskX2) ? safeTaskX1 + 10 : taskX2;
+
               const containerX =
-                Math.min(fromX1, taskX1) - DELTA_RELATION_WIDTH;
+                Math.min(safeFromX1, safeTaskX1) - DELTA_RELATION_WIDTH;
               const containerWidth =
-                Math.max(fromX2, taskX2) - containerX + DELTA_RELATION_WIDTH;
+                Math.max(safeFromX2, safeTaskX2) -
+                containerX +
+                DELTA_RELATION_WIDTH;
+
+              // Ensure container dimensions are valid
+              const safeArrowContainerX =
+                isNaN(containerX) || !isFinite(containerX) ? 0 : containerX;
+              const safeArrowContainerWidth =
+                isNaN(containerWidth) || !isFinite(containerWidth)
+                  ? 100
+                  : Math.max(containerWidth, 0);
 
               arrowsRes.push(
                 <svg
-                  x={Math.max(containerX + (additionalLeftSpace || 0), 0)}
+                  x={Math.max(
+                    safeArrowContainerX + (additionalLeftSpace || 0),
+                    0
+                  )}
                   y={containerY}
-                  width={containerWidth}
+                  width={safeArrowContainerWidth}
                   height={containerHeight}
                   key={`Arrow from ${source.id} to ${taskId} on ${comparisonLevel}`}
                 >
@@ -388,13 +449,13 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
                     distances={distances}
                     taskFrom={source}
                     targetFrom={sourceTarget}
-                    fromX1={fromX1 - containerX}
-                    fromX2={fromX2 - containerX}
+                    fromX1={safeFromX1 - safeArrowContainerX}
+                    fromX2={safeFromX2 - safeArrowContainerX}
                     fromY={innerFromY}
                     taskTo={task}
                     targetTo={ownTarget}
-                    toX1={taskX1 - containerX}
-                    toX2={taskX2 - containerX}
+                    toX1={safeTaskX1 - safeArrowContainerX}
+                    toX2={safeTaskX2 - safeArrowContainerX}
                     toY={innerToY}
                     fullRowHeight={fullRowHeight}
                     taskHeight={taskHeight}
@@ -452,15 +513,38 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
 
               const { x1: toX1, x2: toX2 } = getTaskCoordinates(dependent);
 
-              const containerX = Math.min(toX1, taskX1) - DELTA_RELATION_WIDTH;
+              // Ensure arrow coordinates are valid
+              const safeToX1 = isNaN(toX1) || !isFinite(toX1) ? 0 : toX1;
+              const safeToX2 =
+                isNaN(toX2) || !isFinite(toX2) ? safeToX1 + 10 : toX2;
+              const safeTaskX1 =
+                isNaN(taskX1) || !isFinite(taskX1) ? 0 : taskX1;
+              const safeTaskX2 =
+                isNaN(taskX2) || !isFinite(taskX2) ? safeTaskX1 + 10 : taskX2;
+
+              const containerX =
+                Math.min(safeToX1, safeTaskX1) - DELTA_RELATION_WIDTH;
               const containerWidth =
-                Math.max(toX2, taskX2) - containerX + DELTA_RELATION_WIDTH;
+                Math.max(safeToX2, safeTaskX2) -
+                containerX +
+                DELTA_RELATION_WIDTH;
+
+              // Ensure container dimensions are valid
+              const safeArrowContainerX =
+                isNaN(containerX) || !isFinite(containerX) ? 0 : containerX;
+              const safeArrowContainerWidth =
+                isNaN(containerWidth) || !isFinite(containerWidth)
+                  ? 100
+                  : Math.max(containerWidth, 0);
 
               arrowsRes.push(
                 <svg
-                  x={Math.max(containerX + (additionalLeftSpace || 0), 0)}
+                  x={Math.max(
+                    safeArrowContainerX + (additionalLeftSpace || 0),
+                    0
+                  )}
                   y={containerY}
-                  width={containerWidth}
+                  width={safeArrowContainerWidth}
                   height={containerHeight}
                   key={`Arrow from ${taskId} to ${dependent.id} on ${comparisonLevel}`}
                 >
@@ -468,13 +552,13 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
                     distances={distances}
                     taskFrom={task}
                     targetFrom={ownTarget}
-                    fromX1={taskX1 - containerX}
-                    fromX2={taskX2 - containerX}
+                    fromX1={safeTaskX1 - safeArrowContainerX}
+                    fromX2={safeTaskX2 - safeArrowContainerX}
                     fromY={innerFromY}
                     taskTo={dependent}
                     targetTo={dependentTarget}
-                    toX1={toX1 - containerX}
-                    toX2={toX2 - containerX}
+                    toX1={safeToX1 - safeArrowContainerX}
+                    toX2={safeToX2 - safeArrowContainerX}
                     toY={innerToY}
                     fullRowHeight={fullRowHeight}
                     taskHeight={taskHeight}

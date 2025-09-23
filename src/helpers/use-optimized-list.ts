@@ -1,5 +1,5 @@
 import type { RefObject } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export type OptimizedListParams = [
   /**
@@ -29,25 +29,25 @@ const DELTA = 5;
 const getStartAndEnd = (
   containerEl: Element | null,
   property: "scrollTop" | "scrollLeft",
-  cellSize: number,
+  cellSize: number
 ): OptimizedListParams | null => {
   if (!containerEl) {
     return null;
   }
 
-  const scrollValue = containerEl[property];
+  const el = containerEl as HTMLElement;
+  const scrollValue = property === "scrollLeft" ? el.scrollLeft : el.scrollTop;
   const maxScrollValue =
-    property === "scrollLeft"
-      ? containerEl.scrollWidth
-      : containerEl.scrollHeight;
+    property === "scrollLeft" ? el.scrollWidth : el.scrollHeight;
   const fullValue =
-    property === "scrollLeft"
-      ? containerEl.clientWidth
-      : containerEl.clientHeight;
+    property === "scrollLeft" ? el.clientWidth : el.clientHeight;
 
-  const firstIndex = Math.floor(scrollValue / cellSize);
-  // TODO считать позже на основе связей
-  const lastIndex = Math.ceil((scrollValue + fullValue) / cellSize) + 10;
+  // Compute visible range
+  const firstIndex = Math.max(0, Math.floor(scrollValue / cellSize));
+  const visibleCount = Math.max(1, Math.ceil(fullValue / cellSize));
+  // Dynamic overscan: ~1/2 viewport, clamped
+  const overscan = Math.min(100, Math.max(10, Math.ceil(visibleCount * 0.5)));
+  const lastIndex = Math.floor((scrollValue + fullValue) / cellSize) + overscan;
 
   const isStartOfScroll = scrollValue < DELTA;
   const isEndOfScroll = scrollValue + fullValue > maxScrollValue - DELTA;
@@ -58,48 +58,63 @@ const getStartAndEnd = (
 export const useOptimizedList = (
   containerRef: RefObject<Element>,
   property: "scrollTop" | "scrollLeft",
-  cellSize: number,
+  cellSize: number
 ) => {
-  const [indexes, setIndexes] = useState(() =>
-    getStartAndEnd(containerRef.current, property, cellSize),
+  const [indexes, setIndexes] = useState<OptimizedListParams | null>(() =>
+    getStartAndEnd(containerRef.current, property, cellSize)
   );
 
+  const rafRef = useRef<number | null>(null);
+  const pendingRef = useRef(false);
+
+  const update = useMemo(() => {
+    const fn = () => {
+      pendingRef.current = false;
+      const next = getStartAndEnd(containerRef.current, property, cellSize);
+      setIndexes(prev => {
+        const changed =
+          !prev || !next || next.some((v, i) => (prev ? prev[i] !== v : true));
+        return changed ? next : prev;
+      });
+      rafRef.current = null;
+    };
+    return fn;
+  }, [cellSize, containerRef, property]);
+
   useEffect(() => {
-    let rafId: number | null = null;
+    const el = containerRef.current as HTMLElement | null;
+    if (!el) {
+      return undefined;
+    }
 
-    let prevIndexes = indexes;
+    // Initial compute
+    setIndexes(getStartAndEnd(el, property, cellSize));
 
-    const handler = () => {
-      const nextIndexes = getStartAndEnd(
-        containerRef.current,
-        property,
-        cellSize,
-      );
-
-      const isChanged = prevIndexes
-        ? nextIndexes
-          ? nextIndexes.some(
-            (value, index) => !prevIndexes || prevIndexes[index] !== value,
-          )
-          : true
-        : Boolean(nextIndexes);
-
-      if (isChanged) {
-        prevIndexes = nextIndexes;
-        setIndexes(nextIndexes);
-      }
-
-      rafId = requestAnimationFrame(handler);
+    const onScroll = () => {
+      if (pendingRef.current) return;
+      pendingRef.current = true;
+      rafRef.current = requestAnimationFrame(update);
     };
 
-    rafId = requestAnimationFrame(handler);
+    // Observe size changes as well (affects visible count)
+    const resizeObserver = new ResizeObserver(() => {
+      if (pendingRef.current) return;
+      pendingRef.current = true;
+      rafRef.current = requestAnimationFrame(update);
+    });
+    resizeObserver.observe(el);
+
+    el.addEventListener("scroll", onScroll, { passive: true });
 
     return () => {
-      if (rafId !== null) {
-        cancelAnimationFrame(rafId);
+      el.removeEventListener("scroll", onScroll);
+      resizeObserver.disconnect();
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
       }
+      pendingRef.current = false;
     };
-  }, [cellSize, containerRef, indexes, property]);
+  }, [cellSize, containerRef, property, update]);
 
   return indexes;
 };

@@ -43,16 +43,20 @@ export const countTaskCoordinates = (
     throw new Error(`Row index for task ${id} is not found`);
   }
 
-  const x1 = rtl
+  // Calculate coordinates and ensure they are valid numbers
+  let x1 = rtl
     ? svgWidth - taskXCoordinate(task.end, startDate, viewMode, columnWidth)
     : taskXCoordinate(task.start, startDate, viewMode, columnWidth);
 
-  const x2 = rtl
+  let x2 = rtl
     ? svgWidth - taskXCoordinate(task.start, startDate, viewMode, columnWidth)
     : taskXCoordinate(task.end, startDate, viewMode, columnWidth);
 
-  const levelY = rowIndex * fullRowHeight + rowHeight * (comparisonLevel - 1);
+  // Ensure we have valid coordinates
+  x1 = isNaN(x1) || !isFinite(x1) ? 0 : x1;
+  x2 = isNaN(x2) || !isFinite(x2) ? Math.max(x1, 10) : x2;
 
+  const levelY = rowIndex * fullRowHeight + rowHeight * (comparisonLevel - 1);
   const y = levelY + taskYOffset;
 
   const [progressWidth, progressX] =
@@ -61,21 +65,30 @@ export const countTaskCoordinates = (
       : progressWithByParams(x1, x2, progress, rtl);
 
   const taskX1 = type === "milestone" ? x1 - taskHeight * 0.5 : x1;
-
   const taskX2 = type === "milestone" ? x2 + taskHeight * 0.5 : x2;
 
-  const taskWidth =
+  // Ensure valid task dimensions
+  let taskWidth =
     type === "milestone" ? taskHeight : Math.max(taskX2 - taskX1, 10);
+  taskWidth =
+    isNaN(taskWidth) || !isFinite(taskWidth) ? 10 : Math.max(taskWidth, 1);
 
-  const containerX = taskX1 - columnWidth;
-  const containerWidth = svgWidth - containerX;
+  // Ensure valid container dimensions
+  let containerX = taskX1 - columnWidth;
+  containerX = isNaN(containerX) || !isFinite(containerX) ? 0 : containerX;
+
+  let containerWidth = svgWidth - containerX;
+  containerWidth =
+    isNaN(containerWidth) || !isFinite(containerWidth)
+      ? svgWidth
+      : Math.max(containerWidth, 0);
 
   const innerX1 = columnWidth;
   const innerX2 = columnWidth + taskWidth;
 
   let comparisonDates: TaskComparisonDatesCoordinates;
   if (task.comparisonDates) {
-    const cx1 = rtl
+    let cx1 = rtl
       ? svgWidth -
         taskComparisonXCoordinate(
           task.comparisonDates.end || task.end,
@@ -90,7 +103,7 @@ export const countTaskCoordinates = (
           columnWidth
         );
 
-    const cx2 = rtl
+    let cx2 = rtl
       ? svgWidth -
         taskComparisonXCoordinate(
           task.comparisonDates.start,
@@ -104,6 +117,10 @@ export const countTaskCoordinates = (
           viewMode,
           columnWidth
         );
+
+    // Ensure valid comparison coordinates
+    cx1 = isNaN(cx1) || !isFinite(cx1) ? x1 : cx1;
+    cx2 = isNaN(cx2) || !isFinite(cx2) ? x2 : cx2;
 
     comparisonDates = {
       x: cx1,
