@@ -1,4 +1,4 @@
-import type { MouseEvent } from "react";
+import type { CSSProperties, MouseEvent } from "react";
 import { forwardRef, memo, useCallback, useMemo } from "react";
 
 import { ColumnData, Task, TaskListTableRowProps } from "../../../types";
@@ -154,6 +154,46 @@ const TaskListTableRowInner = forwardRef<HTMLDivElement, TaskListTableRowProps>(
       return classNames.join(" ");
     }, [isCut, moveOverPosition, isOverlay, isDragging]);
 
+    // Compute sticky offsets for pinned columns
+    const pinnedStyles = useMemo(() => {
+      const result: Record<number, CSSProperties> = {};
+      // Left pinned: accumulate from left
+      let leftOffset = 0;
+      if (
+        moveHandleProps ||
+        (!isOverlay &&
+          task.type !== "project" &&
+          task.id !== "no-project-asigned")
+      ) {
+        leftOffset = 24; // drag handle column width
+      }
+      for (let i = 0; i < columns.length; i++) {
+        if (columns[i].pinned === "left") {
+          result[i] = {
+            position: "sticky",
+            left: leftOffset,
+            zIndex: 1,
+            backgroundColor: "inherit",
+          };
+          leftOffset += columns[i].width;
+        }
+      }
+      // Right pinned: accumulate from right
+      let rightOffset = 0;
+      for (let i = columns.length - 1; i >= 0; i--) {
+        if (columns[i].pinned === "right") {
+          result[i] = {
+            position: "sticky",
+            right: rightOffset,
+            zIndex: 1,
+            backgroundColor: "inherit",
+          };
+          rightOffset += columns[i].width;
+        }
+      }
+      return result;
+    }, [columns, moveHandleProps, isOverlay, task.type, task.id]);
+
     return (
       <div
         ref={ref}
@@ -186,6 +226,7 @@ const TaskListTableRowInner = forwardRef<HTMLDivElement, TaskListTableRowProps>(
               style={{
                 minWidth: width,
                 maxWidth: width,
+                ...pinnedStyles[index],
               }}
               key={`${id}-${index}`}
             >

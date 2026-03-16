@@ -43,10 +43,11 @@ const getStartAndEnd = (
     property === "scrollLeft" ? el.clientWidth : el.clientHeight;
 
   // Compute visible range
-  const firstIndex = Math.max(0, Math.floor(scrollValue / cellSize));
   const visibleCount = Math.max(1, Math.ceil(fullValue / cellSize));
-  // Dynamic overscan: ~1/2 viewport, clamped
+  // Dynamic overscan: ~1/2 viewport, clamped, applied to BOTH start and end
+  // to prevent relationship lines from disappearing during scroll
   const overscan = Math.min(100, Math.max(10, Math.ceil(visibleCount * 0.5)));
+  const firstIndex = Math.max(0, Math.floor(scrollValue / cellSize) - overscan);
   const lastIndex = Math.floor((scrollValue + fullValue) / cellSize) + overscan;
 
   const isStartOfScroll = scrollValue < DELTA;

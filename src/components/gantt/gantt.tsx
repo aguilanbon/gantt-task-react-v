@@ -138,6 +138,7 @@ export const Gantt: React.FC<GanttProps> = props => {
     dataDateLabel = "Data Date",
     showProgress = true,
     progressColor,
+    scrollToTaskId,
   } = props;
   const ganttSVGRef = useRef<SVGSVGElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -504,6 +505,55 @@ export const Gantt: React.FC<GanttProps> = props => {
     },
     [mapTaskToCoordinates, setScrollXProgrammatically]
   );
+
+  // scrollToTaskId prop: scroll both X and Y to reveal and select the task
+  const prevScrollToTaskIdRef = useRef<string | undefined>(undefined);
+  useEffect(() => {
+    if (!scrollToTaskId || scrollToTaskId === prevScrollToTaskIdRef.current) {
+      return;
+    }
+    prevScrollToTaskIdRef.current = scrollToTaskId;
+
+    // Find the task across all comparison levels
+    for (const [comparisonLevel, levelMap] of tasksMap) {
+      const task = levelMap.get(scrollToTaskId);
+      if (!task || task.type === "empty") {
+        continue;
+      }
+
+      // Scroll horizontally to the task
+      const { x1 } = getTaskCoordinatesDefault(task, mapTaskToCoordinates);
+      setScrollXProgrammatically(Math.max(0, x1 - 100));
+
+      // Scroll vertically to the task row
+      const rowIndexMap = taskToRowIndexMap.get(comparisonLevel);
+      if (rowIndexMap) {
+        const rowIndex = rowIndexMap.get(scrollToTaskId);
+        if (typeof rowIndex === "number") {
+          const targetScrollY =
+            rowIndex * fullRowHeight - ganttHeight / 2 + fullRowHeight / 2;
+          setScrollYProgrammatically(
+            Math.max(0, Math.min(targetScrollY, ganttFullHeight - ganttHeight))
+          );
+        }
+      }
+
+      // Select the task
+      selectTask(scrollToTaskId);
+      break;
+    }
+  }, [
+    scrollToTaskId,
+    tasksMap,
+    mapTaskToCoordinates,
+    taskToRowIndexMap,
+    fullRowHeight,
+    ganttHeight,
+    ganttFullHeight,
+    setScrollXProgrammatically,
+    setScrollYProgrammatically,
+    selectTask,
+  ]);
 
   const { contextMenu, handleCloseContextMenu, handleOpenContextMenu } =
     useContextMenu(wrapperRef, scrollToTask);

@@ -485,6 +485,11 @@ export interface GanttProps {
    * Custom color for progress bars. If not provided, theme progress colors are used.
    */
   progressColor?: string;
+  /**
+   * When set (or changed), the gantt will scroll to reveal and select this task.
+   * Set to a task id to scroll both horizontally and vertically to that task.
+   */
+  scrollToTaskId?: TaskId;
 }
 
 export interface GanttTaskBarActions {
@@ -518,6 +523,11 @@ export type Column = {
   width: number;
   title?: ReactNode;
   canResize?: boolean;
+  /**
+   * Pin column to the left or right side of the table.
+   * Pinned columns stay visible while scrolling horizontally.
+   */
+  pinned?: "left" | "right";
 };
 
 export type OnResizeColumn = (

@@ -1,4 +1,4 @@
-import React, { Fragment, memo } from "react";
+import React, { Fragment, memo, useMemo } from "react";
 
 import { TaskListHeaderProps } from "../../../types";
 
@@ -11,6 +11,42 @@ const TaskListTableHeadersDefaultInner: React.FC<TaskListHeaderProps> = ({
   canMoveTasks,
   onColumnResizeStart,
 }) => {
+  // Compute sticky offsets for pinned columns
+  const pinnedStyles = useMemo(() => {
+    const result: Record<number, React.CSSProperties> = {};
+    // Left pinned: accumulate from left
+    let leftOffset = 0;
+    if (canMoveTasks) {
+      // account for the drag handle column width (~24px via CSS var)
+      leftOffset = 24;
+    }
+    for (let i = 0; i < columns.length; i++) {
+      if (columns[i].pinned === "left") {
+        result[i] = {
+          position: "sticky",
+          left: leftOffset,
+          zIndex: 2,
+          backgroundColor: "var(--gantt-table-header-background-color, #fff)",
+        };
+        leftOffset += columns[i].width;
+      }
+    }
+    // Right pinned: accumulate from right
+    let rightOffset = 0;
+    for (let i = columns.length - 1; i >= 0; i--) {
+      if (columns[i].pinned === "right") {
+        result[i] = {
+          position: "sticky",
+          right: rightOffset,
+          zIndex: 2,
+          backgroundColor: "var(--gantt-table-header-background-color, #fff)",
+        };
+        rightOffset += columns[i].width;
+      }
+    }
+    return result;
+  }, [columns, canMoveTasks]);
+
   return (
     <div
       className={styles.ganttTable}
@@ -46,6 +82,7 @@ const TaskListTableHeadersDefaultInner: React.FC<TaskListHeaderProps> = ({
                 style={{
                   minWidth: width,
                   maxWidth: width,
+                  ...pinnedStyles[index],
                 }}
               >
                 {title}
