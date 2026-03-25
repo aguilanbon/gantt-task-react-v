@@ -166,6 +166,14 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
     const arrowsRes: ReactNode[] = [];
     const selectedTasksRes: ReactNode[] = [];
 
+    // Build a task-by-ID lookup for the cross-viewport arrow pass
+    const taskById = new Map<string, Task>();
+    mapGlobalRowIndexToTask.forEach(task => {
+      if (task.type !== "empty") {
+        taskById.set(task.id, task as Task);
+      }
+    });
+
     // task id -> true
     const addedSelectedTasks: Record<string, true> = {};
 
@@ -559,6 +567,123 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
                     targetTo={dependentTarget}
                     toX1={safeToX1 - safeArrowContainerX}
                     toX2={safeToX2 - safeArrowContainerX}
+                    toY={innerToY}
+                    fullRowHeight={fullRowHeight}
+                    taskHeight={taskHeight}
+                    isCritical={isCritical}
+                    rtl={rtl}
+                    onArrowDoubleClick={onArrowDoubleClick}
+                  />
+                </svg>
+              );
+            }
+          );
+      }
+    }
+
+    // Second pass: render arrows for long-spanning dependencies where both
+    // endpoints are outside the rendered row range but the arrow line crosses
+    // through the visible viewport.
+    const renderedTop = start * fullRowHeight;
+    const renderedBottom = (end + 1) * fullRowHeight;
+
+    for (const [comparisonLevel, dependenciesByLevel] of dependencyMap) {
+      let addedDependenciesAtLevel = addedDependencies[comparisonLevel];
+      if (!addedDependenciesAtLevel) {
+        addedDependenciesAtLevel = {};
+        addedDependencies[comparisonLevel] = addedDependenciesAtLevel;
+      }
+
+      const criticalPathOnLevel = criticalPaths
+        ? criticalPaths.get(comparisonLevel)
+        : undefined;
+
+      for (const [taskId, dependencies] of dependenciesByLevel) {
+        let addedDependenciesAtTask = addedDependenciesAtLevel[taskId];
+        if (!addedDependenciesAtTask) {
+          addedDependenciesAtTask = {};
+          addedDependenciesAtLevel[taskId] = addedDependenciesAtTask;
+        }
+
+        const targetTask = taskById.get(taskId);
+        if (!targetTask) continue;
+
+        const criticalPathForTask = criticalPathOnLevel
+          ? criticalPathOnLevel.dependencies.get(taskId)
+          : undefined;
+
+        dependencies
+          .filter(({ source }) => {
+            if (addedDependenciesAtTask[source.id]) return false;
+            if (!visibleTasksMirror[source.id]) return false;
+            return true;
+          })
+          .forEach(
+            ({
+              containerHeight,
+              containerY,
+              innerFromY,
+              innerToY,
+              ownTarget,
+              source,
+              sourceTarget,
+            }) => {
+              // Skip arrows entirely outside the rendered vertical range
+              if (
+                containerY + containerHeight < renderedTop ||
+                containerY > renderedBottom
+              ) {
+                return;
+              }
+
+              addedDependenciesAtTask[source.id] = true;
+
+              const isCritical = criticalPathForTask
+                ? criticalPathForTask.has(source.id)
+                : false;
+
+              const { x1: fromX1, x2: fromX2 } = getTaskCoordinates(source);
+              const { x1: targetX1, x2: targetX2 } =
+                getTaskCoordinates(targetTask);
+
+              const safeFromX1 =
+                isNaN(fromX1) || !isFinite(fromX1) ? 0 : fromX1;
+              const safeFromX2 =
+                isNaN(fromX2) || !isFinite(fromX2) ? safeFromX1 + 10 : fromX2;
+              const safeTargetX1 =
+                isNaN(targetX1) || !isFinite(targetX1) ? 0 : targetX1;
+              const safeTargetX2 =
+                isNaN(targetX2) || !isFinite(targetX2)
+                  ? safeTargetX1 + 10
+                  : targetX2;
+
+              const cX =
+                Math.min(safeFromX1, safeTargetX1) - DELTA_RELATION_WIDTH;
+              const cW =
+                Math.max(safeFromX2, safeTargetX2) - cX + DELTA_RELATION_WIDTH;
+
+              const safeCX = isNaN(cX) || !isFinite(cX) ? 0 : cX;
+              const safeCW = isNaN(cW) || !isFinite(cW) ? 100 : Math.max(cW, 0);
+
+              arrowsRes.push(
+                <svg
+                  x={Math.max(safeCX + (additionalLeftSpace || 0), 0)}
+                  y={containerY}
+                  width={safeCW}
+                  height={containerHeight}
+                  key={`Arrow from ${source.id} to ${taskId} on ${comparisonLevel}`}
+                >
+                  <Arrow
+                    distances={distances}
+                    taskFrom={source}
+                    targetFrom={sourceTarget}
+                    fromX1={safeFromX1 - safeCX}
+                    fromX2={safeFromX2 - safeCX}
+                    fromY={innerFromY}
+                    taskTo={targetTask}
+                    targetTo={ownTarget}
+                    toX1={safeTargetX1 - safeCX}
+                    toX2={safeTargetX2 - safeCX}
                     toY={innerToY}
                     fullRowHeight={fullRowHeight}
                     taskHeight={taskHeight}
