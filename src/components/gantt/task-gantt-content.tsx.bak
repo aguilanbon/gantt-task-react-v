@@ -54,9 +54,6 @@ export interface TaskGanttContentProps extends GanttTaskBarActions {
   ) => void;
   mapGlobalRowIndexToTask: GlobalRowIndexToTaskMap;
   onArrowDoubleClick: (taskFrom: Task, taskTo: Task) => void;
-  onArrowClick?: (taskFrom: Task, taskTo: Task) => void;
-  activeArrowKey?: string | null;
-  activeTaskId?: string | null;
   onClick?: (task: Task, event: React.MouseEvent<SVGElement>) => void;
   onDoubleClick?: (task: Task) => void;
   renderedRowIndexes: OptimizedListParams | null;
@@ -101,9 +98,6 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
     onTaskBarDragStart,
     mapGlobalRowIndexToTask,
     onArrowDoubleClick,
-    onArrowClick,
-    activeArrowKey,
-    activeTaskId,
     onDoubleClick,
     onClick,
     renderedRowIndexes,
@@ -179,33 +173,6 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
         taskById.set(task.id, task as Task);
       }
     });
-
-    // Pre-compute connection totals per task-side for arrow distribution
-    // Key: `${taskId}|${side}|${direction}`
-    const connectionTotals = new Map<string, number>();
-    for (const [, dependenciesByLevel] of dependencyMap) {
-      for (const [taskId, dependencies] of dependenciesByLevel) {
-        for (const dep of dependencies) {
-          if (!visibleTasksMirror[dep.source.id]) continue;
-          const sourceKey = `${dep.source.id}|${dep.sourceTarget}|out`;
-          connectionTotals.set(
-            sourceKey,
-            (connectionTotals.get(sourceKey) || 0) + 1
-          );
-          const targetKey = `${taskId}|${dep.ownTarget}|in`;
-          connectionTotals.set(
-            targetKey,
-            (connectionTotals.get(targetKey) || 0) + 1
-          );
-        }
-      }
-    }
-    const connectionIndices = new Map<string, number>();
-    const getConnectionIndex = (key: string): number => {
-      const idx = connectionIndices.get(key) || 0;
-      connectionIndices.set(key, idx + 1);
-      return idx;
-    };
 
     // task id -> true
     const addedSelectedTasks: Record<string, true> = {};
@@ -503,26 +470,6 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
                     isCritical={isCritical}
                     rtl={rtl}
                     onArrowDoubleClick={onArrowDoubleClick}
-                    onArrowClick={onArrowClick}
-                    isActive={
-                      activeArrowKey === `${source.id}|${taskId}` ||
-                      activeTaskId === source.id ||
-                      activeTaskId === taskId
-                    }
-                    fromConnectionIndex={getConnectionIndex(
-                      `${source.id}|${sourceTarget}|out`
-                    )}
-                    fromTotalConnections={
-                      connectionTotals.get(
-                        `${source.id}|${sourceTarget}|out`
-                      ) || 1
-                    }
-                    toConnectionIndex={getConnectionIndex(
-                      `${taskId}|${ownTarget}|in`
-                    )}
-                    toTotalConnections={
-                      connectionTotals.get(`${taskId}|${ownTarget}|in`) || 1
-                    }
                   />
                 </svg>
               );
@@ -626,26 +573,6 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
                     isCritical={isCritical}
                     rtl={rtl}
                     onArrowDoubleClick={onArrowDoubleClick}
-                    onArrowClick={onArrowClick}
-                    isActive={
-                      activeArrowKey === `${taskId}|${dependent.id}` ||
-                      activeTaskId === taskId ||
-                      activeTaskId === dependent.id
-                    }
-                    fromConnectionIndex={getConnectionIndex(
-                      `${taskId}|${ownTarget}|out`
-                    )}
-                    fromTotalConnections={
-                      connectionTotals.get(`${taskId}|${ownTarget}|out`) || 1
-                    }
-                    toConnectionIndex={getConnectionIndex(
-                      `${dependent.id}|${dependentTarget}|in`
-                    )}
-                    toTotalConnections={
-                      connectionTotals.get(
-                        `${dependent.id}|${dependentTarget}|in`
-                      ) || 1
-                    }
                   />
                 </svg>
               );
@@ -763,26 +690,6 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
                     isCritical={isCritical}
                     rtl={rtl}
                     onArrowDoubleClick={onArrowDoubleClick}
-                    onArrowClick={onArrowClick}
-                    isActive={
-                      activeArrowKey === `${source.id}|${taskId}` ||
-                      activeTaskId === source.id ||
-                      activeTaskId === taskId
-                    }
-                    fromConnectionIndex={getConnectionIndex(
-                      `${source.id}|${sourceTarget}|out`
-                    )}
-                    fromTotalConnections={
-                      connectionTotals.get(
-                        `${source.id}|${sourceTarget}|out`
-                      ) || 1
-                    }
-                    toConnectionIndex={getConnectionIndex(
-                      `${taskId}|${ownTarget}|in`
-                    )}
-                    toTotalConnections={
-                      connectionTotals.get(`${taskId}|${ownTarget}|in`) || 1
-                    }
                   />
                 </svg>
               );
@@ -828,9 +735,6 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
     isRelationChangeable,
     visibleTasksMirror,
     onArrowDoubleClick,
-    onArrowClick,
-    activeArrowKey,
-    activeTaskId,
     showProgress,
     progressColor,
   ]);

@@ -15,6 +15,7 @@ import {
   DateSetup,
   Dependency,
   GanttProps,
+  GanttDrawerData,
   GanttTaskBarProps,
   GanttTaskListProps,
   OnChangeTasksAction,
@@ -88,6 +89,7 @@ import { GanttLocaleProvider } from "../gantt-locale";
 import { GANTT_EN_LOCALE } from "../../locales";
 import { mergeDeepObj } from "../../helpers/obj-helper";
 import { GanttLoader } from "../gantt-loader";
+import { GanttDrawer } from "../other/gantt-drawer";
 
 export const Gantt: React.FC<GanttProps> = props => {
   const {
@@ -139,6 +141,7 @@ export const Gantt: React.FC<GanttProps> = props => {
     showProgress = true,
     progressColor,
     scrollToTaskId,
+    drawer: drawerProps,
   } = props;
   const ganttSVGRef = useRef<SVGSVGElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -155,6 +158,14 @@ export const Gantt: React.FC<GanttProps> = props => {
     [theme, rowHeight]
   );
   const [waitCommitTasks, setWaitCommitTasks] = useState(false);
+
+  const enableDrawer = drawerProps?.enableDrawer ?? false;
+  const drawerWidth = drawerProps?.drawerWidth ?? 360;
+  const renderDrawerContent = drawerProps?.renderDrawerContent;
+
+  const [drawerData, setDrawerData] = useState<GanttDrawerData | null>(null);
+  const [activeArrowKey, setActiveArrowKey] = useState<string | null>(null);
+  const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
 
   const taskBar = useMemo(() => {
     return mergeDeepObj(
@@ -1487,6 +1498,90 @@ export const Gantt: React.FC<GanttProps> = props => {
     [mapTaskToGlobalIndex, taskBar, handleCommitInternal, sortedTasks]
   );
 
+  const onArrowClick = useCallback(
+    (taskFrom: Task, taskTo: Task) => {
+      if (enableDrawer) {
+        setActiveArrowKey(`${taskFrom.id}|${taskTo.id}`);
+        setActiveTaskId(null);
+        setDrawerData({ type: "arrow", taskFrom, taskTo });
+      }
+      if (taskBar.onArrowClick) {
+        taskBar.onArrowClick(taskFrom, taskTo);
+      }
+    },
+    [enableDrawer, taskBar]
+  );
+
+  const handleTaskClick = useCallback(
+    (task: Task, _event: React.MouseEvent<SVGElement>) => {
+      if (enableDrawer) {
+        setActiveArrowKey(null);
+        setActiveTaskId(task.id);
+        setDrawerData({ type: "task", task });
+      }
+      if (taskBar.onClick) {
+        taskBar.onClick(task as RenderTask);
+      }
+    },
+    [enableDrawer, taskBar]
+  );
+
+  const handleDrawerClose = useCallback(() => {
+    setDrawerData(null);
+    setActiveArrowKey(null);
+    setActiveTaskId(null);
+  }, []);
+
+  const handleGoToTask = useCallback(
+    (taskId: string) => {
+      // Scroll to and select the task
+      for (const [comparisonLevel, levelMap] of tasksMap) {
+        const task = levelMap.get(taskId);
+        if (!task || task.type === "empty") continue;
+
+        const { x1 } = getTaskCoordinatesDefault(task, mapTaskToCoordinates);
+        setScrollXProgrammatically(Math.max(0, x1 - 100));
+
+        const rowIndexMap = taskToRowIndexMap.get(comparisonLevel);
+        if (rowIndexMap) {
+          const rowIndex = rowIndexMap.get(taskId);
+          if (typeof rowIndex === "number") {
+            const targetScrollY =
+              rowIndex * fullRowHeight - ganttHeight / 2 + fullRowHeight / 2;
+            setScrollYProgrammatically(
+              Math.max(
+                0,
+                Math.min(targetScrollY, ganttFullHeight - ganttHeight)
+              )
+            );
+          }
+        }
+
+        selectTask(taskId);
+        if (onSelectTaskIds) {
+          onSelectTaskIds([taskId]);
+        }
+        break;
+      }
+
+      // Close drawer after navigating
+      handleDrawerClose();
+    },
+    [
+      tasksMap,
+      mapTaskToCoordinates,
+      taskToRowIndexMap,
+      fullRowHeight,
+      ganttHeight,
+      ganttFullHeight,
+      setScrollXProgrammatically,
+      setScrollYProgrammatically,
+      selectTask,
+      onSelectTaskIds,
+      handleDrawerClose,
+    ]
+  );
+
   const handleAction = useHandleAction({
     checkTaskIdExists,
     childTasksMap,
@@ -1719,6 +1814,7 @@ export const Gantt: React.FC<GanttProps> = props => {
   const renderTaskBarProps: TaskGanttContentProps = useMemo(
     () => ({
       ...taskBar,
+      onClick: enableDrawer ? handleTaskClick : taskBar.onClick,
       taskBarMovingAction: task =>
         task.id === changeInProgress?.changedTask?.id
           ? changeInProgress.action
@@ -1745,6 +1841,9 @@ export const Gantt: React.FC<GanttProps> = props => {
       onTooltipTask: onChangeTooltipTask,
       mapGlobalRowIndexToTask,
       onArrowDoubleClick,
+      onArrowClick: enableDrawer ? onArrowClick : taskBar.onArrowClick,
+      activeArrowKey,
+      activeTaskId,
       renderedRowIndexes,
       rtl,
       selectTaskOnMouseDown,
@@ -1782,6 +1881,11 @@ export const Gantt: React.FC<GanttProps> = props => {
       onChangeTooltipTask,
       mapGlobalRowIndexToTask,
       onArrowDoubleClick,
+      onArrowClick,
+      activeArrowKey,
+      activeTaskId,
+      enableDrawer,
+      handleTaskClick,
       renderedRowIndexes,
       rtl,
       selectTaskOnMouseDown,
@@ -1951,6 +2055,16 @@ export const Gantt: React.FC<GanttProps> = props => {
             )}
 
             <GanttLoader loading={waitCommitTasks} />
+
+            {enableDrawer && (
+              <GanttDrawer
+                data={drawerData}
+                width={drawerWidth}
+                onClose={handleDrawerClose}
+                onGoToTask={handleGoToTask}
+                renderContent={renderDrawerContent}
+              />
+            )}
           </div>
         </GanttLocaleProvider>
       )}

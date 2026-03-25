@@ -1,0 +1,26 @@
+.arrow_clickable {
+  cursor: pointer;
+}
+
+/*noinspection CssUnresolvedCustomProperty*/
+.arrow_clickable:hover .mainPath {
+  filter: var(--gantt-hover-filter);
+  stroke: var(--gantt-arrow-hover-color, red);
+  stroke-width: 3px;
+}
+
+/*noinspection CssUnresolvedCustomProperty*/
+.arrow_clickable:hover polygon {
+  fill: var(--gantt-arrow-hover-color, red);
+}
+
+.mainPath {
+  fill: none;
+  stroke-width: 2px;
+}
+
+.clickZone {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 8px;
+}

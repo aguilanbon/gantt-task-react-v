@@ -15,6 +15,34 @@ import {
   TaskId,
 } from "./common-types";
 
+export type GanttDrawerData =
+  | {
+      type: "task";
+      task: Task;
+    }
+  | {
+      type: "arrow";
+      taskFrom: Task;
+      taskTo: Task;
+    };
+
+export type RenderDrawerContent = (data: GanttDrawerData) => ReactNode;
+
+export interface GanttDrawerProps {
+  /**
+   * Enable the drawer panel on task/arrow click
+   */
+  enableDrawer?: boolean;
+  /**
+   * Width of the drawer panel in pixels. Defaults to 360.
+   */
+  drawerWidth?: number;
+  /**
+   * Render function for custom drawer content
+   */
+  renderDrawerContent?: RenderDrawerContent;
+}
+
 export type RenderTopHeader = (
   date: Date,
   viewMode: ViewMode,
@@ -273,6 +301,11 @@ export interface GanttTaskBarProps extends GanttTaskBarActions {
   onArrowDoubleClick?: OnArrowDoubleClick;
 
   /**
+   * Invokes on click on the relation arrow between tasks
+   */
+  onArrowClick?: (taskFrom: Task, taskTo: Task) => void;
+
+  /**
    * Invokes on bar double click.
    */
   onDoubleClick?: (task: Task) => void;
@@ -490,6 +523,11 @@ export interface GanttProps {
    * Set to a task id to scroll both horizontally and vertically to that task.
    */
   scrollToTaskId?: TaskId;
+
+  /**
+   * Drawer panel options for task/arrow click
+   */
+  drawer?: GanttDrawerProps;
 }
 
 export interface GanttTaskBarActions {

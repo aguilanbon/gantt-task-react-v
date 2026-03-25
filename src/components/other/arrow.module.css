@@ -6,7 +6,8 @@
 .arrow_clickable:hover .mainPath {
   filter: var(--gantt-hover-filter);
   stroke: var(--gantt-arrow-hover-color, red);
-  stroke-width: 3px;
+  stroke-width: 2px;
+  opacity: 1;
 }
 
 /*noinspection CssUnresolvedCustomProperty*/
@@ -14,13 +15,31 @@
   fill: var(--gantt-arrow-hover-color, red);
 }
 
+/*noinspection CssUnresolvedCustomProperty*/
+.arrow_active .mainPath {
+  stroke: var(--gantt-arrow-active-color, var(--gantt-arrow-hover-color, red));
+  stroke-width: 2px;
+  opacity: 1;
+}
+
+/*noinspection CssUnresolvedCustomProperty*/
+.arrow_active polygon {
+  fill: var(--gantt-arrow-active-color, var(--gantt-arrow-hover-color, red));
+}
+
 .mainPath {
   fill: none;
-  stroke-width: 2px;
+  stroke-width: 1.2px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.55;
+  transition:
+    stroke-width 0.15s ease,
+    opacity 0.15s ease;
 }
 
 .clickZone {
   fill: none;
   stroke: transparent;
-  stroke-width: 8px;
+  stroke-width: 12px;
 }
