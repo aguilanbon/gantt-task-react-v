@@ -10,6 +10,10 @@
 - Added Tooltip for comparison bars
 - Show Custom Data Date Line
 - Customize Data Date Line and Today Line Color and Label
+- Show/Hide Task Table Column
+- Improved staggered and rounded arrows
+- RightClick ContextMenu option for Tasklist and Gantt
+- Custom Drawer on click taskbar and arrow, callback to get taskdata
 
 ## [Live Demo In Storybook](https://661071b076b50cb537c16c19-yrsukdfefs.chromatic.com/)
 
@@ -83,7 +87,7 @@ yarn storebook
 | onDateChange\*     | (task: Task, children: Task[]) => void/boolean/Promise<void>/Promise<boolean> | Specifies the function to be executed when drag taskbar event on timeline has finished. |
 | onProgressChange\* | (task: Task, children: Task[]) => void/boolean/Promise<void>/Promise<boolean> | Specifies the function to be executed when drag taskbar progress event has finished.    |
 | onExpanderClick\*  | onExpanderClick: (task: Task) => void;                                        | Specifies the function to be executed on the table expander click                       |
-| onWheel\*          | onWheel: (wheelEvent: WheelEvent) => void;                                    | Specifies the function to be executed when the mouse wheel is used                           |
+| onWheel\*          | onWheel: (wheelEvent: WheelEvent) => void;                                    | Specifies the function to be executed when the mouse wheel is used                      |
 | timeStep           | number                                                                        | A time step value for onDateChange. Specify in milliseconds.                            |
 
 \* Chart undoes operation if method return false or error. Parameter children returns one level deep records.
@@ -102,28 +106,28 @@ yarn storebook
 
 ### StylingOption
 
-| Parameter Name             | Type   | Description                                                                                    |
-| :------------------------- | :----- | :--------------------------------------------------------------------------------------------- |
-| headerHeight               | number | Specifies the header height.                                                                   |
+| Parameter Name             | Type   | Description                                                                                       |
+| :------------------------- | :----- | :------------------------------------------------------------------------------------------------ |
+| headerHeight               | number | Specifies the header height.                                                                      |
 | ganttHeight                | number | Specifies the gantt chart height without header. If not set or 0, adapts to its parent container. |
-| columnWidth                | number | Specifies the time period width.                                                               |
-| listCellWidth              | string | Specifies the task list cell width. Empty string is mean "no display".                         |
-| rowHeight                  | number | Specifies the task row height.                                                                 |
-| barCornerRadius            | number | Specifies the taskbar corner rounding.                                                         |
-| barFill                    | number | Specifies the taskbar occupation. Sets in percent from 0 to 100.                               |
-| handleWidth                | number | Specifies width the taskbar drag event control for start and end dates.                        |
-| fontFamily                 | string | Specifies the application font.                                                                |
-| fontSize                   | string | Specifies the application font size.                                                           |
-| barProgressColor           | string | Specifies the taskbar progress fill color globally.                                            |
-| barProgressSelectedColor   | string | Specifies the taskbar progress fill color globally on select.                                  |
-| barBackgroundColor         | string | Specifies the taskbar background fill color globally.                                          |
-| barBackgroundSelectedColor | string | Specifies the taskbar background fill color globally on select.                                |
-| arrowColor                 | string | Specifies the relationship arrow fill color.                                                   |
-| arrowIndent                | number | Specifies the relationship arrow right indent. Sets in px                                      |
-| todayColor                 | string | Specifies the current period column fill color.                                                |
-| TooltipContent             |        | Specifies the Tooltip view for selected taskbar.                                               |
-| TaskListHeader             |        | Specifies the task list Header view                                                            |
-| TaskListTable              |        | Specifies the task list Table view                                                             |
+| columnWidth                | number | Specifies the time period width.                                                                  |
+| listCellWidth              | string | Specifies the task list cell width. Empty string is mean "no display".                            |
+| rowHeight                  | number | Specifies the task row height.                                                                    |
+| barCornerRadius            | number | Specifies the taskbar corner rounding.                                                            |
+| barFill                    | number | Specifies the taskbar occupation. Sets in percent from 0 to 100.                                  |
+| handleWidth                | number | Specifies width the taskbar drag event control for start and end dates.                           |
+| fontFamily                 | string | Specifies the application font.                                                                   |
+| fontSize                   | string | Specifies the application font size.                                                              |
+| barProgressColor           | string | Specifies the taskbar progress fill color globally.                                               |
+| barProgressSelectedColor   | string | Specifies the taskbar progress fill color globally on select.                                     |
+| barBackgroundColor         | string | Specifies the taskbar background fill color globally.                                             |
+| barBackgroundSelectedColor | string | Specifies the taskbar background fill color globally on select.                                   |
+| arrowColor                 | string | Specifies the relationship arrow fill color.                                                      |
+| arrowIndent                | number | Specifies the relationship arrow right indent. Sets in px                                         |
+| todayColor                 | string | Specifies the current period column fill color.                                                   |
+| TooltipContent             |        | Specifies the Tooltip view for selected taskbar.                                                  |
+| TaskListHeader             |        | Specifies the task list Header view                                                               |
+| TaskListTable              |        | Specifies the task list Table view                                                                |
 
 - TooltipContent: [`React.FC<{ task: Task; fontSize: string; fontFamily: string; }>;`](https://github.com/MaTeMaTuK/gantt-task-react/blob/main/src/components/other/tooltip.tsx#L56)
 - TaskListHeader: `React.FC<{ headerHeight: number; rowWidth: string; fontFamily: string; fontSize: string;}>;`
