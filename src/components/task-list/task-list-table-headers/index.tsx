@@ -1,15 +1,19 @@
 import React, { Fragment, memo, useMemo } from "react";
 
 import { TaskListHeaderProps } from "../../../types";
+import { ColumnVisibilityToggle } from "../column-visibility-toggle";
 
 import styles from "./task-list-header.module.css";
 
 const TaskListTableHeadersDefaultInner: React.FC<TaskListHeaderProps> = ({
   headerHeight,
   columns,
+  allColumns,
   canResizeColumns,
   canMoveTasks,
+  canToggleColumns,
   onColumnResizeStart,
+  onColumnVisibilityChange,
 }) => {
   // Compute sticky offsets for pinned columns
   const pinnedStyles = useMemo(() => {
@@ -107,6 +111,18 @@ const TaskListTableHeadersDefaultInner: React.FC<TaskListHeaderProps> = ({
             </Fragment>
           );
         })}
+
+        {canToggleColumns && (
+          <div
+            className={styles.ganttTable_HeaderItem}
+            style={{ minWidth: 28, maxWidth: 28 }}
+          >
+            <ColumnVisibilityToggle
+              allColumns={allColumns}
+              onColumnVisibilityChange={onColumnVisibilityChange}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

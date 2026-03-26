@@ -233,6 +233,11 @@ export interface GanttTaskListProps {
   canResizeColumns?: boolean;
 
   /**
+   * Show column visibility toggle button in the header
+   */
+  canToggleColumns?: boolean;
+
+  /**
    *  Custom icons
    */
   icons?: Partial<GanttRenderIconsProps>;
@@ -251,6 +256,11 @@ export interface GanttTaskListProps {
    * Can reorder tasks
    */
   onResizeColumn?: OnResizeColumn;
+
+  /**
+   * Callback when column visibility is toggled
+   */
+  onColumnVisibilityChange?: OnColumnVisibilityChange;
 
   /**
    * Render bottom table content
@@ -566,12 +576,21 @@ export type Column = {
    * Pinned columns stay visible while scrolling horizontally.
    */
   pinned?: "left" | "right";
+  /**
+   * Hide this column from the table. Defaults to false.
+   */
+  hidden?: boolean;
 };
 
 export type OnResizeColumn = (
   nextColumns: readonly Column[],
   columnIndex: number,
   deltaWidth: number
+) => void;
+
+export type OnColumnVisibilityChange = (
+  columnId: string,
+  hidden: boolean
 ) => void;
 export type ChangeAction =
   | {

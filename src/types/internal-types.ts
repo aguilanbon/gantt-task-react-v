@@ -65,7 +65,7 @@ export type TaskComparisonDatesCoordinates = {
    * Height of the comparison task
    */
   height: number;
-}
+};
 
 export type TaskCoordinates = {
   /**
@@ -249,9 +249,12 @@ export type TaskListTableRowProps = {
 export interface TaskListHeaderProps {
   headerHeight: number;
   columns: readonly Column[];
+  allColumns: readonly Column[];
   canMoveTasks: boolean;
   canResizeColumns: boolean;
+  canToggleColumns: boolean;
   onColumnResizeStart: (columnIndex: number, clientX: number) => void;
+  onColumnVisibilityChange?: (columnId: string, hidden: boolean) => void;
 }
 
 export type MinAndMaxChildsOfTask = [

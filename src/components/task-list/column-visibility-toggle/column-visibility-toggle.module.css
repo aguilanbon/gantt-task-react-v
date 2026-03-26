@@ -1,0 +1,113 @@
+.toggleWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggleButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 4px;
+  color: var(--gantt-table-header-color, #555);
+  padding: 2px;
+}
+
+.toggleButton:hover {
+  background-color: var(--gantt-table-hover-action-color, rgba(0, 0, 0, 0.08));
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 100;
+  min-width: 180px;
+  max-height: 300px;
+  overflow-y: auto;
+  background: var(--gantt-table-header-background-color, #fff);
+  border: 1px solid
+    var(--gantt-table-divider-color, var(--gantt-divider-color, #e0e0e0));
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  padding: 4px 0;
+  margin-top: 4px;
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: var(--gantt-font-size, 12px);
+  font-family: var(
+    --gantt-font-family,
+    Arial,
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    "Fira Sans",
+    "Droid Sans",
+    "Helvetica Neue",
+    sans-serif
+  );
+  color: var(--gantt-table-header-color, #333);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.dropdownItem:hover {
+  background-color: var(--gantt-table-hover-action-color, rgba(0, 0, 0, 0.04));
+}
+
+.checkbox {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--gantt-bar-background-color, #4e87c4);
+  cursor: pointer;
+  margin: 0;
+}
+
+.columnLabel {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdownTitle {
+  padding: 6px 12px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--gantt-table-header-color, #999);
+  font-family: var(
+    --gantt-font-family,
+    Arial,
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    "Fira Sans",
+    "Droid Sans",
+    "Helvetica Neue",
+    sans-serif
+  );
+}
+
+.divider {
+  height: 1px;
+  margin: 4px 0;
+  background: var(
+    --gantt-table-divider-color,
+    var(--gantt-divider-color, #e0e0e0)
+  );
+}

@@ -19,6 +19,10 @@
 .barLabelOutside {
   fill: var(--gantt-secondary-text-color);
   text-anchor: start;
+  stroke: white;
+  stroke-width: 4px;
+  stroke-linejoin: round;
+  paint-order: stroke;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;

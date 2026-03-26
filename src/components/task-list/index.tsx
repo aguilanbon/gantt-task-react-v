@@ -1,5 +1,5 @@
 import type { MouseEvent, RefObject } from "react";
-import React, { memo, useCallback } from "react";
+import React, { memo, useCallback, useMemo } from "react";
 
 import {
   AllowReorderTask,
@@ -10,6 +10,7 @@ import {
   Distances,
   GanttRenderIconsProps,
   MapTaskToNestedIndex,
+  OnColumnVisibilityChange,
   OnResizeColumn,
   Task,
   TaskListTableRowProps,
@@ -67,6 +68,8 @@ export type TaskListProps = {
   taskListRef: RefObject<HTMLDivElement>;
   tasks: readonly RenderTask[];
   onResizeColumn?: OnResizeColumn;
+  canToggleColumns?: boolean;
+  onColumnVisibilityChange?: OnColumnVisibilityChange;
   tableBottom?: TableRenderBottomProps;
 };
 
@@ -105,11 +108,13 @@ const TaskListInner: React.FC<TaskListProps> = ({
   tasks,
   onResizeColumn,
   canReorderTasks,
+  canToggleColumns,
+  onColumnVisibilityChange,
   tableBottom,
 }) => {
   // Manage the column and list table resizing
   const [
-    columns,
+    allColumns,
     taskListWidth,
     tableWidth,
     onTableResizeStart,
@@ -119,6 +124,12 @@ const TaskListInner: React.FC<TaskListProps> = ({
     canReorderTasks,
     onResizeColumn,
     ganttRef
+  );
+
+  // Filter out hidden columns for rendering
+  const columns = useMemo(
+    () => allColumns.filter(col => !col.hidden),
+    [allColumns]
   );
 
   const renderedIndexes = useOptimizedList(
@@ -211,7 +222,10 @@ const TaskListInner: React.FC<TaskListProps> = ({
           canMoveTasks={canReorderTasks}
           headerHeight={distances.headerHeight}
           columns={columns}
+          allColumns={allColumns}
+          canToggleColumns={!!canToggleColumns}
           onColumnResizeStart={onColumnResizeStart}
+          onColumnVisibilityChange={onColumnVisibilityChange}
           canResizeColumns={canResizeColumns}
         />
 
