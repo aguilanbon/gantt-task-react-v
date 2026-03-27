@@ -1517,7 +1517,6 @@ export const Gantt: React.FC<GanttProps> = props => {
       if (enableDrawer) {
         setActiveArrowKey(null);
         setActiveTaskId(task.id);
-        setDrawerData({ type: "task", task });
       }
       selectTask(task.id);
       if (taskBar.onClick) {
@@ -1525,6 +1524,20 @@ export const Gantt: React.FC<GanttProps> = props => {
       }
     },
     [enableDrawer, selectTask, taskBar]
+  );
+
+  const handleTaskDoubleClick = useCallback(
+    (task: Task) => {
+      if (enableDrawer) {
+        setActiveArrowKey(null);
+        setActiveTaskId(task.id);
+        setDrawerData({ type: "task", task });
+      }
+      if (taskBar.onDoubleClick) {
+        taskBar.onDoubleClick(task);
+      }
+    },
+    [enableDrawer, taskBar]
   );
 
   const handleDrawerClose = useCallback(() => {
@@ -1816,6 +1829,9 @@ export const Gantt: React.FC<GanttProps> = props => {
     () => ({
       ...taskBar,
       onClick: enableDrawer ? handleTaskClick : taskBar.onClick,
+      onDoubleClick: enableDrawer
+        ? handleTaskDoubleClick
+        : taskBar.onDoubleClick,
       taskBarMovingAction: task =>
         task.id === changeInProgress?.changedTask?.id
           ? changeInProgress.action
