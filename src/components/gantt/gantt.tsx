@@ -1519,11 +1519,12 @@ export const Gantt: React.FC<GanttProps> = props => {
         setActiveTaskId(task.id);
         setDrawerData({ type: "task", task });
       }
+      selectTask(task.id);
       if (taskBar.onClick) {
         taskBar.onClick(task as RenderTask);
       }
     },
-    [enableDrawer, taskBar]
+    [enableDrawer, selectTask, taskBar]
   );
 
   const handleDrawerClose = useCallback(() => {
