@@ -314,12 +314,13 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
         <TaskResponsiveLabel
           x1={x1}
           width={width}
-          taskHeight={taskHeight}
+          taskHeight={task.type === "project" ? taskHalfHeight : taskHeight}
           arrowIndent={arrowIndent}
           rtl={rtl}
           label={task.name}
           taskYOffset={taskYOffset}
           viewMode={viewMode}
+          alwaysOutline={task.type === "project"}
         />
       )}
     </g>
