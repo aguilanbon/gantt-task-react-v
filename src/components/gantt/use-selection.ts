@@ -23,13 +23,14 @@ export const useSelection = (
     useState<Readonly<Record<string, true>>>(initialValue);
   const [selectedIdsMirror, setSelectedIdsMirror] =
     useState<Readonly<Record<string, true>>>(initialValue);
+  const selectedIdsRef = useRef<Readonly<Record<string, true>>>(initialValue);
   const lastSelectedIdRef = useRef<string | null>(null);
 
   const selectTask = useCallback((taskId: string) => {
     setCutIdsMirror(initialValue);
-    setSelectedIdsMirror({
-      [taskId]: true,
-    });
+    const next = { [taskId]: true } as const;
+    setSelectedIdsMirror(next);
+    selectedIdsRef.current = next;
 
     lastSelectedIdRef.current = taskId;
   }, []);
@@ -39,29 +40,33 @@ export const useSelection = (
       setCutIdsMirror(initialValue);
       setSelectedIdsMirror(prevValue => {
         if (!taskId) {
+          selectedIdsRef.current = {};
           return {};
         }
 
         if (singleMode) {
-          return {
-            [taskId]: true,
-          };
+          const next: Readonly<Record<string, true>> = { [taskId]: true };
+          selectedIdsRef.current = next;
+          return next;
         }
 
         if (prevValue[taskId]) {
-          const nextValue = {
+          const nextValue: Record<string, true> = {
             ...prevValue,
           };
 
           delete nextValue[taskId];
 
+          selectedIdsRef.current = nextValue;
           return nextValue;
         }
 
-        return {
+        const next: Readonly<Record<string, true>> = {
           ...prevValue,
           [taskId]: true,
         };
+        selectedIdsRef.current = next;
+        return next;
       });
 
       lastSelectedIdRef.current = taskId;
@@ -219,6 +224,7 @@ export const useSelection = (
     selectTaskOnMouseDown,
     selectTasksFromLastSelected,
     selectedIdsMirror,
+    selectedIdsRef,
     toggleTask,
   };
 };

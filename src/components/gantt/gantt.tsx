@@ -1526,8 +1526,12 @@ export const Gantt: React.FC<GanttProps> = props => {
         }
         return;
       }
-      // Drawer not open: just fire the user callback.
-      // Selection was already handled by mousedown.
+      // Drawer not open: always select + set active state from click,
+      // matching the task list row pattern where both happen atomically.
+      // mousedown's toggle is overridden here to guarantee selection.
+      selectTask(task.id);
+      setActiveArrowKey(null);
+      setActiveTaskId(task.id);
       if (taskBar.onClick) {
         taskBar.onClick(task as RenderTask);
       }
@@ -1632,6 +1636,15 @@ export const Gantt: React.FC<GanttProps> = props => {
     setActiveArrowKey(null);
     setActiveTaskId(null);
   }, [drawerData, selectedIdsMirror, tasksMap]);
+
+  // Clear active arrow/task highlight when nothing is selected (no drawer needed)
+  useEffect(() => {
+    const selectedIds = Object.keys(selectedIdsMirror);
+    if (selectedIds.length === 0) {
+      setActiveArrowKey(null);
+      setActiveTaskId(null);
+    }
+  }, [selectedIdsMirror]);
 
   const handleGoToTask = useCallback(
     (taskId: string) => {
@@ -1930,7 +1943,7 @@ export const Gantt: React.FC<GanttProps> = props => {
   const renderTaskBarProps: TaskGanttContentProps = useMemo(
     () => ({
       ...taskBar,
-      onClick: enableDrawer ? handleTaskClick : taskBar.onClick,
+      onClick: handleTaskClick,
       onDoubleClick: enableDrawer
         ? handleTaskDoubleClick
         : taskBar.onDoubleClick,
