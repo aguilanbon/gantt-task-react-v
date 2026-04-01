@@ -250,6 +250,12 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
   const onMouseDown = useCallback<MouseEventHandler>(
     event => {
       event.stopPropagation();
+      // Skip selection toggle on the 2nd mousedown of a double-click
+      // to prevent deselection. The dblclick handler calls selectTask()
+      // to guarantee the task is selected.
+      if (event.detail >= 2) {
+        return;
+      }
       onSelectTaskOnMouseDown(task.id, event);
     },
     [onSelectTaskOnMouseDown, task]

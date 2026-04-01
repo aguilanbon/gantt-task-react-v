@@ -239,6 +239,7 @@ export type TaskListTableRowProps = {
   isSelected: boolean;
   isShowTaskNumbers: boolean;
   onClick: (task: RenderTask) => void;
+  onDoubleClick?: (task: RenderTask) => void;
   onExpanderClick: (task: Task) => void;
   scrollToTask: (task: Task) => void;
   selectTaskOnMouseDown: (taskId: string, event: MouseEvent) => void;

@@ -12,6 +12,7 @@ type BarDisplayProps = {
   progressWidth: number;
   /* progress start point */
   progressX: number;
+  progress: number;
   startMoveFullTask: (clientX: number) => void;
   taskId: TaskId;
   width: number;
@@ -31,6 +32,7 @@ export const BarDisplay: React.FC<BarDisplayProps> = ({
   height,
   progressWidth,
   progressX,
+  progress,
   startMoveFullTask,
   width,
   x,
@@ -143,6 +145,21 @@ export const BarDisplay: React.FC<BarDisplayProps> = ({
           rx={barCornerRadius}
           fill={processColor}
         />
+      )}
+      {showProgress && width > 40 && (
+        <text
+          x={x + width / 2}
+          y={y + height / 2}
+          dominantBaseline="central"
+          textAnchor="middle"
+          fill="#fff"
+          fontSize={11}
+          fontWeight={600}
+          pointerEvents="none"
+          style={{ userSelect: "none" }}
+        >
+          {Math.round(progress)}%
+        </text>
       )}
     </g>
   );

@@ -130,6 +130,7 @@ export const Bar: React.FC<BarProps> = props => {
           height={taskHeight}
           progressX={progressX}
           progressWidth={progressWidth}
+          progress={task.progress}
           barCornerRadius={barCornerRadius}
           isSelected={isSelected}
           isCritical={isCritical}
@@ -202,7 +203,7 @@ export const Bar: React.FC<BarProps> = props => {
 
       {relationHandles}
 
-      {false && isProgressChangeable(task) && (
+      {isProgressChangeable(task) && (
         <BarProgressHandle
           className={`${styles.barHandle} ${isMovingProgress ? styles.barHandleImportantVisible : ""} ${isSmallWidth || isMovingDate || isRelationDrawMode ? styles.barHandleImportantHidden : ""}`}
           taskId={task.id}

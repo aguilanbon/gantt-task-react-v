@@ -26,7 +26,10 @@ export type GanttDrawerData =
       taskTo: Task;
     };
 
-export type RenderDrawerContent = (data: GanttDrawerData) => ReactNode;
+export type RenderDrawerContent = (
+  data: GanttDrawerData,
+  goToTask: (taskId: string) => void
+) => ReactNode;
 
 export interface GanttDrawerProps {
   /**
@@ -266,6 +269,16 @@ export interface GanttTaskListProps {
    * Render bottom table content
    */
   tableBottom?: TableRenderBottomProps;
+
+  /**
+   * Invokes on single click on a task list row. Receives the task data.
+   */
+  onClickTaskRow?: (task: RenderTask) => void;
+
+  /**
+   * Invokes on double click on a task list row. Receives the task data.
+   */
+  onDoubleClickTaskRow?: (task: RenderTask) => void;
 }
 
 export interface TableRenderBottomProps {

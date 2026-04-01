@@ -30,6 +30,7 @@ const TaskListTableRowInner = forwardRef<HTMLDivElement, TaskListTableRowProps>(
       isDragging,
       isShowTaskNumbers,
       onClick,
+      onDoubleClick,
       onExpanderClick,
       scrollToTask,
       selectTaskOnMouseDown,
@@ -52,12 +53,31 @@ const TaskListTableRowInner = forwardRef<HTMLDivElement, TaskListTableRowProps>(
           scrollToTask(task);
         }
 
+        // detail >= 2 means this is a rapid re-click (e.g. 2nd mousedown
+        // of a double-click). Skip toggle to prevent deselection before
+        // the dblclick handler fires. The dblclick handler calls selectTask()
+        // to guarantee the task is selected.
+        if (event.detail >= 2) {
+          return;
+        }
+
         selectTaskOnMouseDown(task.id, event);
+
         if (onClick) {
           onClick(task);
         }
       },
       [onClick, scrollToTask, selectTaskOnMouseDown, task]
+    );
+
+    const onRootDoubleClick = useCallback(
+      (event: MouseEvent) => {
+        if (onDoubleClick) {
+          event.preventDefault();
+          onDoubleClick(task);
+        }
+      },
+      [onDoubleClick, task]
     );
 
     const onContextMenu = useCallback(
@@ -199,6 +219,7 @@ const TaskListTableRowInner = forwardRef<HTMLDivElement, TaskListTableRowProps>(
         ref={ref}
         className={rowClassName}
         onMouseDown={onRootMouseDown}
+        onDoubleClick={onRootDoubleClick}
         style={{
           height: fullRowHeight,
           backgroundColor: backgroundColor,

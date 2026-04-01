@@ -58,6 +58,7 @@ export type TaskListProps = {
   isShowTaskNumbers?: boolean;
   mapTaskToNestedIndex: MapTaskToNestedIndex;
   onClick?: (task: RenderTask) => void;
+  onDoubleClick?: (task: RenderTask) => void;
   onExpanderClick: (task: Task) => void;
   scrollToBottomStep: () => void;
   scrollToTask: (task: Task) => void;
@@ -98,6 +99,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
   mapTaskToNestedIndex,
   onExpanderClick,
   onClick,
+  onDoubleClick,
   scrollToTask,
   selectTaskOnMouseDown,
   selectedIdsMirror,
@@ -174,6 +176,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
         isSelected: selectedIdsMirror[id],
         isShowTaskNumbers: isShowTaskNumbers,
         onClick: onClick,
+        onDoubleClick: onDoubleClick,
         onExpanderClick: onExpanderClick,
         scrollToTask: scrollToTask,
         selectTaskOnMouseDown: selectTaskOnMouseDown,
@@ -198,6 +201,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
       isShowTaskNumbers,
       mapTaskToNestedIndex,
       onClick,
+      onDoubleClick,
       onExpanderClick,
       scrollToTask,
       selectTaskOnMouseDown,

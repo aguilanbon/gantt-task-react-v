@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from "react";
+import React, { memo } from "react";
 
 import type { GanttDrawerData, RenderDrawerContent } from "../../types";
 
@@ -19,14 +19,6 @@ const GanttDrawerInner: React.FC<GanttDrawerInternalProps> = ({
   onGoToTask,
   renderContent,
 }) => {
-  const handleOverlayClick = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      onClose();
-    },
-    [onClose]
-  );
-
   const title =
     data?.type === "task"
       ? data.task.name
@@ -43,7 +35,6 @@ const GanttDrawerInner: React.FC<GanttDrawerInternalProps> = ({
 
   return (
     <>
-      {data && <div className={styles.overlay} onClick={handleOverlayClick} />}
       <div
         className={`${styles.drawer}${data ? ` ${styles.drawer_open}` : ""}`}
         style={{ width }}
@@ -125,7 +116,9 @@ const GanttDrawerInner: React.FC<GanttDrawerInternalProps> = ({
               )}
             </div>
           )}
-          {data && renderContent ? renderContent(data) : null}
+          {data && renderContent
+            ? renderContent(data, onGoToTask ?? (() => {}))
+            : null}
         </div>
       </div>
     </>

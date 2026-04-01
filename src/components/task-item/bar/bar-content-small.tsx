@@ -57,6 +57,7 @@ export const BarContentSmall: React.FC<
         isSelected={isSelected}
         progressWidth={progressWidth}
         progressX={progressX}
+        progress={task.progress}
         startMoveFullTask={startMoveFullTask}
         width={handleWidth * 2}
         x={x1}

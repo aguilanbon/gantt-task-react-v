@@ -6,6 +6,7 @@ import { DependenciesColumn } from "./dependencies-column";
 import { DeleteColumn } from "./delete-column";
 import { EditColumn } from "./edit-column";
 import { AddColumn } from "./add-column";
+import { AssigneesColumn } from "./assignees-column";
 
 export function useTaskListColumnsBuilder() {
   const createNameColumn = useCallback(
@@ -83,6 +84,18 @@ export function useTaskListColumnsBuilder() {
     };
   }, []);
 
+  const createAssigneesColumn = useCallback(
+    (title: React.ReactNode | null, width?: number) => {
+      return {
+        id: "AssigneesColumn",
+        component: AssigneesColumn,
+        width: width || 120,
+        title: title,
+      };
+    },
+    []
+  );
+
   return {
     createNameColumn,
     createStartDateColumn,
@@ -91,5 +104,6 @@ export function useTaskListColumnsBuilder() {
     createDeleteActionColumn,
     createEditActionColumn,
     createAddActionColumn,
+    createAssigneesColumn,
   };
 }

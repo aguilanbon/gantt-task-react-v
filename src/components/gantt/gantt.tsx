@@ -1514,20 +1514,31 @@ export const Gantt: React.FC<GanttProps> = props => {
 
   const handleTaskClick = useCallback(
     (task: Task, _event: React.MouseEvent<SVGElement>) => {
-      if (enableDrawer) {
+      if (enableDrawer && drawerData) {
+        // Drawer is open — mousedown already force-selected.
+        // Now update the drawer to show this task and fire user callback.
+        selectTask(task.id);
         setActiveArrowKey(null);
         setActiveTaskId(task.id);
+        setDrawerData({ type: "task", task });
+        if (taskBar.onClick) {
+          taskBar.onClick(task as RenderTask);
+        }
+        return;
       }
-      selectTask(task.id);
+      // Drawer not open: just fire the user callback.
+      // Selection was already handled by mousedown.
       if (taskBar.onClick) {
         taskBar.onClick(task as RenderTask);
       }
     },
-    [enableDrawer, selectTask, taskBar]
+    [enableDrawer, drawerData, selectTask, taskBar]
   );
 
   const handleTaskDoubleClick = useCallback(
     (task: Task) => {
+      selectTask(task.id);
+
       if (enableDrawer) {
         setActiveArrowKey(null);
         setActiveTaskId(task.id);
@@ -1537,7 +1548,48 @@ export const Gantt: React.FC<GanttProps> = props => {
         taskBar.onDoubleClick(task);
       }
     },
-    [enableDrawer, taskBar]
+    [enableDrawer, selectTask, taskBar]
+  );
+
+  const handleTaskRowClick = useCallback(
+    (task: RenderTask) => {
+      if (task.type !== "empty") {
+        setActiveArrowKey(null);
+        setActiveTaskId(task.id);
+
+        // If drawer is already open with a task, switch to the clicked task
+        if (enableDrawer && drawerData?.type === "task") {
+          setDrawerData({ type: "task", task: task as Task });
+        }
+      }
+      if (taskList.onClickTaskRow) {
+        taskList.onClickTaskRow(task);
+      }
+    },
+    [enableDrawer, drawerData, taskList]
+  );
+
+  const handleTaskRowDoubleClick = useCallback(
+    (task: RenderTask) => {
+      // If the drawer is already open, ignore double-clicks entirely.
+      // Single click already handles switching tasks when drawer is open.
+      if (enableDrawer && drawerData) {
+        return;
+      }
+
+      if (task.type !== "empty") {
+        selectTask(task.id);
+      }
+      if (enableDrawer && task.type !== "empty") {
+        setActiveArrowKey(null);
+        setActiveTaskId(task.id);
+        setDrawerData({ type: "task", task: task as Task });
+      }
+      if (taskList.onDoubleClickTaskRow) {
+        taskList.onDoubleClickTaskRow(task);
+      }
+    },
+    [enableDrawer, drawerData, taskList, selectTask]
   );
 
   const handleDrawerClose = useCallback(() => {
@@ -1545,6 +1597,41 @@ export const Gantt: React.FC<GanttProps> = props => {
     setActiveArrowKey(null);
     setActiveTaskId(null);
   }, []);
+
+  // Close drawer when no tasks are selected, or switch to the newly selected task
+  useEffect(() => {
+    if (!drawerData || drawerData.type !== "task") return;
+
+    const currentTaskId = drawerData.task.id;
+    // Current drawer task is still selected — nothing to do
+    if (selectedIdsMirror[currentTaskId]) return;
+
+    const selectedIds = Object.keys(selectedIdsMirror);
+
+    // No tasks selected at all — close drawer
+    if (selectedIds.length === 0) {
+      setDrawerData(null);
+      setActiveArrowKey(null);
+      setActiveTaskId(null);
+      return;
+    }
+
+    // Another task is now selected — switch drawer to show it
+    const newTaskId = selectedIds[0];
+    for (const [, levelMap] of tasksMap) {
+      const task = levelMap.get(newTaskId);
+      if (task && task.type !== "empty") {
+        setActiveTaskId(newTaskId);
+        setDrawerData({ type: "task", task });
+        return;
+      }
+    }
+
+    // Could not find the task — close drawer
+    setDrawerData(null);
+    setActiveArrowKey(null);
+    setActiveTaskId(null);
+  }, [drawerData, selectedIdsMirror, tasksMap]);
 
   const handleGoToTask = useCallback(
     (taskId: string) => {
@@ -1825,6 +1912,21 @@ export const Gantt: React.FC<GanttProps> = props => {
     ]
   );
 
+  // When the drawer is open, force-select on mousedown (no toggle) to prevent
+  // the double-click deselection bug. The click/dblclick handlers will update
+  // the drawer data since they have the full task object.
+  const drawerAwareSelectOnMouseDown = useCallback(
+    (taskId: string, event: React.MouseEvent) => {
+      if (enableDrawer && drawerData) {
+        // Force-select (never toggle) so double-click can't deselect
+        selectTask(taskId);
+        return;
+      }
+      selectTaskOnMouseDown(taskId, event);
+    },
+    [enableDrawer, drawerData, selectTask, selectTaskOnMouseDown]
+  );
+
   const renderTaskBarProps: TaskGanttContentProps = useMemo(
     () => ({
       ...taskBar,
@@ -1863,7 +1965,7 @@ export const Gantt: React.FC<GanttProps> = props => {
       activeTaskId,
       renderedRowIndexes,
       rtl,
-      selectTaskOnMouseDown,
+      selectTaskOnMouseDown: drawerAwareSelectOnMouseDown,
       selectedIdsMirror,
       startColumnIndex,
       taskHalfHeight,
@@ -1903,9 +2005,10 @@ export const Gantt: React.FC<GanttProps> = props => {
       activeTaskId,
       enableDrawer,
       handleTaskClick,
+      handleTaskDoubleClick,
       renderedRowIndexes,
       rtl,
-      selectTaskOnMouseDown,
+      drawerAwareSelectOnMouseDown,
       selectedIdsMirror,
       startColumnIndex,
       taskHalfHeight,
@@ -1941,6 +2044,8 @@ export const Gantt: React.FC<GanttProps> = props => {
       handleMoveTasksInside,
       handleOpenContextMenu: handleOpenContextMenuForRow,
       mapTaskToNestedIndex,
+      onClick: handleTaskRowClick,
+      onDoubleClick: handleTaskRowDoubleClick,
       onExpanderClick,
       scrollToBottomStep,
       scrollToTopStep,
@@ -1970,6 +2075,8 @@ export const Gantt: React.FC<GanttProps> = props => {
       handleMoveTaskBefore,
       handleMoveTasksInside,
       handleOpenContextMenuForRow,
+      handleTaskRowClick,
+      handleTaskRowDoubleClick,
       mapTaskToNestedIndex,
       onExpanderClick,
       scrollToBottomStep,
