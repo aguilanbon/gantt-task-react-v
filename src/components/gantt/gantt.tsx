@@ -163,6 +163,7 @@ export const Gantt: React.FC<GanttProps> = props => {
   const enableDrawer = drawerProps?.enableDrawer ?? false;
   const drawerWidth = drawerProps?.drawerWidth ?? 360;
   const renderDrawerContent = drawerProps?.renderDrawerContent;
+  const openDrawerTaskId = drawerProps?.openDrawerTaskId;
 
   const [drawerData, setDrawerData] = useState<GanttDrawerData | null>(null);
   const [activeArrowKey, setActiveArrowKey] = useState<string | null>(null);
@@ -566,6 +567,24 @@ export const Gantt: React.FC<GanttProps> = props => {
     setScrollYProgrammatically,
     selectTask,
   ]);
+
+  // openDrawerTaskId prop: programmatically open the drawer for a given task id
+  const prevOpenDrawerTaskIdRef = useRef<string | undefined>(undefined);
+  useEffect(() => {
+    if (!enableDrawer || !openDrawerTaskId) return;
+    if (openDrawerTaskId === prevOpenDrawerTaskIdRef.current) return;
+    prevOpenDrawerTaskIdRef.current = openDrawerTaskId;
+
+    for (const [, levelMap] of tasksMap) {
+      const task = levelMap.get(openDrawerTaskId);
+      if (!task || task.type === "empty") continue;
+      setActiveArrowKey(null);
+      setActiveTaskId(openDrawerTaskId);
+      setDrawerData({ type: "task", task: task as Task });
+      selectTask(openDrawerTaskId);
+      break;
+    }
+  }, [enableDrawer, openDrawerTaskId, tasksMap, selectTask]);
 
   const { contextMenu, handleCloseContextMenu, handleOpenContextMenu } =
     useContextMenu(wrapperRef, scrollToTask);

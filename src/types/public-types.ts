@@ -44,6 +44,12 @@ export interface GanttDrawerProps {
    * Render function for custom drawer content
    */
   renderDrawerContent?: RenderDrawerContent;
+  /**
+   * When set (or changed), the drawer will open and display the details of the
+   * task with this id. Requires `enableDrawer: true`.
+   * Set to `undefined` or change to a new id to control the drawer imperatively.
+   */
+  openDrawerTaskId?: string;
 }
 
 export type RenderTopHeader = (

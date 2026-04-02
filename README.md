@@ -256,6 +256,33 @@ A slide-in panel for viewing task/arrow details with built-in "Go to" navigation
 
 The `goToTask(taskId)` function scrolls both horizontally and vertically to center the target task and selects it. Built-in "Go to" buttons also appear automatically in the drawer header for arrow-type panels and task-type panels.
 
+### Opening the drawer programmatically
+
+Pass `openDrawerTaskId` inside the `drawer` prop to open the drawer for a specific task without any user interaction. When the value changes the drawer updates to show the new task.
+
+```tsx
+const [inspect, setInspect] = useState<string | undefined>(undefined);
+
+<Gantt
+  tasks={tasks}
+  drawer={{
+    enableDrawer: true,
+    openDrawerTaskId: inspect,
+    renderDrawerContent: data => {
+      if (data.type === "task") return <div>{data.task.name}</div>;
+      return null;
+    },
+  }}
+/>;
+
+{
+  /* Open drawer for a specific task from anywhere in your UI */
+}
+<button onClick={() => setInspect("task-1")}>Inspect Task 1</button>;
+```
+
+> **Note:** `openDrawerTaskId` is only honoured when `enableDrawer` is `true`.
+
 ## Scroll To Task
 
 Programmatically scroll to and select any task by id.
@@ -643,11 +670,12 @@ const tasks: Task[] = [
 
 ### GanttDrawerProps
 
-| Prop                  | Type                  | Default | Description             |
-| --------------------- | --------------------- | ------- | ----------------------- |
-| `enableDrawer`        | `boolean`             | `false` | Enable drawer panel     |
-| `drawerWidth`         | `number`              | `360`   | Panel width in px       |
-| `renderDrawerContent` | `RenderDrawerContent` | —       | Custom content renderer |
+| Prop                  | Type                  | Default | Description                                                |
+| --------------------- | --------------------- | ------- | ---------------------------------------------------------- |
+| `enableDrawer`        | `boolean`             | `false` | Enable drawer panel                                        |
+| `drawerWidth`         | `number`              | `360`   | Panel width in px                                          |
+| `renderDrawerContent` | `RenderDrawerContent` | —       | Custom content renderer                                    |
+| `openDrawerTaskId`    | `string`              | —       | Programmatically open the drawer for the task with this id |
 
 `RenderDrawerContent = (data: GanttDrawerData, goToTask: (taskId: string) => void) => ReactNode`
 
