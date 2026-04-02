@@ -139,6 +139,7 @@ export const Gantt: React.FC<GanttProps> = props => {
     todayLabel = "Today",
     dataDateLabel = "Data Date",
     showProgress = true,
+    hideProjectProgress = false,
     progressColor,
     scrollToTaskId,
     drawer: drawerProps,
@@ -1987,6 +1988,7 @@ export const Gantt: React.FC<GanttProps> = props => {
       visibleTasksMirror,
       viewMode,
       showProgress,
+      hideProjectProgress,
       progressColor,
     }),
     [
@@ -2032,6 +2034,7 @@ export const Gantt: React.FC<GanttProps> = props => {
       changeInProgress?.action,
       handleDeleteTasks,
       showProgress,
+      hideProjectProgress,
       progressColor,
     ]
   );

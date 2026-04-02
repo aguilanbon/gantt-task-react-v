@@ -40,6 +40,7 @@ export const Bar: React.FC<BarProps> = props => {
     movingAction,
     ganttRelationEvent,
     showProgress = true,
+    hideProjectProgress = false,
     progressColor,
   } = props;
   const isSmallWidth = useMemo(() => width < 30, [width]);
@@ -115,7 +116,7 @@ export const Bar: React.FC<BarProps> = props => {
           isCritical={isCritical}
           hasChildren={hasChildren}
           startMoveFullTask={startMoveFullTask}
-          showProgress={showProgress}
+          showProgress={hideProjectProgress ? false : showProgress}
           progressColor={progressColor}
         />
       );

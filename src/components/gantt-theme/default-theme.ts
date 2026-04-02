@@ -71,10 +71,10 @@ export const DEFAULT_THEME: GanttTheme = {
     projectProgressCriticalColor: "#00838F",
     projectProgressSelectedCriticalColor: "#006064",
 
-    projectBackgroundColor: "#FFA726",
-    projectBackgroundSelectedColor: "#F57C00",
-    projectBackgroundCriticalColor: "#EF6C00",
-    projectBackgroundSelectedCriticalColor: "#E65100",
+    projectBackgroundColor: "#0A0A0A",
+    projectBackgroundSelectedColor: "#1A1A1A",
+    projectBackgroundCriticalColor: "#2A0000",
+    projectBackgroundSelectedCriticalColor: "#3A0000",
 
     milestoneBackgroundColor: "#FF7043",
     milestoneBackgroundSelectedColor: "#E64A19",

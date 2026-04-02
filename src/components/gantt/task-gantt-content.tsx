@@ -77,6 +77,7 @@ export interface TaskGanttContentProps extends GanttTaskBarActions {
   taskBarMovingAction: (task: RenderTask) => TaskBarMoveAction | null;
   viewMode: ViewMode;
   showProgress?: boolean;
+  hideProjectProgress?: boolean;
   progressColor?: string;
 }
 
@@ -125,6 +126,7 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
     waitCommitTasks,
     viewMode,
     showProgress = true,
+    hideProjectProgress = false,
     progressColor,
   } = props;
 
@@ -340,6 +342,7 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
             renderCustomLabel={renderCustomLabel}
             viewMode={viewMode}
             showProgress={showProgress}
+            hideProjectProgress={hideProjectProgress}
             progressColor={progressColor}
           />
         </svg>
@@ -832,6 +835,7 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
     activeArrowKey,
     activeTaskId,
     showProgress,
+    hideProjectProgress,
     progressColor,
   ]);
 

@@ -538,6 +538,10 @@ export interface GanttProps {
    */
   showProgress?: boolean;
   /**
+   * Hide the progress bar specifically on project type task bars. Defaults to false.
+   */
+  hideProjectProgress?: boolean;
+  /**
    * Custom color for progress bars. If not provided, theme progress colors are used.
    */
   progressColor?: string;

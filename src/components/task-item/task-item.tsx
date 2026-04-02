@@ -61,6 +61,7 @@ export interface TaskItemProps
   renderCustomLabel?: RenderCustomLabel;
   viewMode: ViewMode;
   showProgress?: boolean;
+  hideProjectProgress?: boolean;
   progressColor?: string;
 }
 
