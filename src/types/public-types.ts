@@ -285,6 +285,16 @@ export interface GanttTaskListProps {
    * Invokes on double click on a task list row. Receives the task data.
    */
   onDoubleClickTaskRow?: (task: RenderTask) => void;
+
+  /**
+   * Callback when a cell value is committed via inline editing.
+   * Return a promise that resolves to the updated task, or void.
+   */
+  onTaskInlineEdit?: (
+    task: RenderTask,
+    columnId: string,
+    newValue: unknown
+  ) => void | Promise<void>;
 }
 
 export interface TableRenderBottomProps {
@@ -582,10 +592,46 @@ export type ColumnData = {
   isShowTaskNumbers: boolean;
   onExpanderClick: (task: Task) => void;
   task: RenderTask;
+  /**
+   * Whether this cell is currently in inline-edit mode.
+   */
+  isEditing?: boolean;
+  /**
+   * Call to enter inline-edit mode for this column/cell.
+   */
+  onStartEdit?: () => void;
+  /**
+   * Commit the edited value. `value` is the new raw value for the column.
+   */
+  onCommitEdit?: (value: unknown) => void;
+  /**
+   * Cancel inline editing and revert to display mode.
+   */
+  onCancelEdit?: () => void;
 };
 
 export type ColumnProps = {
   data: ColumnData;
+};
+
+/**
+ * The type of inline editor to render when no custom `editComponent` is provided.
+ * - `"text"` – a plain text input (default)
+ * - `"date"` – a date input (`<input type="date">`)
+ * - `"number"` – a numeric input
+ * - `"select"` – a `<select>` dropdown (provide `editOptions`)
+ */
+export type ColumnEditType = "text" | "date" | "number" | "select";
+
+export type EditColumnProps = {
+  /** Current column data (task, etc.) */
+  data: ColumnData;
+  /** Current raw value of the cell */
+  value: unknown;
+  /** Called with the new value when editing is finished */
+  onCommit: (value: unknown) => void;
+  /** Called to cancel editing */
+  onCancel: () => void;
 };
 
 export type Column = {
@@ -603,6 +649,28 @@ export type Column = {
    * Hide this column from the table. Defaults to false.
    */
   hidden?: boolean;
+  /**
+   * Enable inline editing for this column. Defaults to false.
+   */
+  editable?: boolean;
+  /**
+   * The built-in editor type. Defaults to `"text"`.
+   */
+  editType?: ColumnEditType;
+  /**
+   * Options for the `"select"` edit type.
+   */
+  editOptions?: { value: string; label: string }[];
+  /**
+   * Custom edit component. When provided it replaces the built-in editor.
+   */
+  editComponent?: ComponentType<EditColumnProps>;
+  /**
+   * Resolve the raw value from the task for this column.
+   * Used by the built-in editor and passed to custom `editComponent`.
+   * Falls back to `task.payload?.[column.id]` then `(task as any)[column.id]`.
+   */
+  getValueFromTask?: (task: RenderTask) => unknown;
 };
 
 export type OnResizeColumn = (

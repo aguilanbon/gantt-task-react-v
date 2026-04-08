@@ -1,10 +1,16 @@
 import type { CSSProperties, MouseEvent } from "react";
-import { forwardRef, memo, useCallback, useMemo } from "react";
+import { forwardRef, memo, useCallback, useMemo, useState } from "react";
 
-import { ColumnData, Task, TaskListTableRowProps } from "../../../types";
+import {
+  Column,
+  ColumnData,
+  Task,
+  TaskListTableRowProps,
+} from "../../../types";
 
 import styles from "./task-list-table-row.module.css";
 import { DragIndicatorIcon } from "../../icons/drag-indicator-icon";
+import { InlineEditCell } from "./inline-edit-cell";
 
 const TaskListTableRowInner = forwardRef<HTMLDivElement, TaskListTableRowProps>(
   (props, ref) => {
@@ -39,8 +45,12 @@ const TaskListTableRowInner = forwardRef<HTMLDivElement, TaskListTableRowProps>(
       moveHandleProps,
       isOverlay,
       moveOverPosition,
+      onTaskInlineEdit,
     } = props;
     const { id, comparisonLevel = 1 } = task;
+
+    // Track which column id is currently being edited in this row
+    const [editingColumnId, setEditingColumnId] = useState<string | null>(null);
 
     const onRootMouseDown = useCallback(
       (event: MouseEvent) => {
@@ -240,7 +250,67 @@ const TaskListTableRowInner = forwardRef<HTMLDivElement, TaskListTableRowProps>(
           </div>
         )}
 
-        {columns.map(({ id, component: Component, width }, index) => {
+        {columns.map((col, index) => {
+          const { id: colId, component: Component, width } = col;
+          const isEditingCell = editingColumnId === colId;
+
+          // Resolve current cell value for inline editing
+          const resolveValue = (c: Column) => {
+            const t = columnData.task;
+            // 1. Custom resolver takes priority
+            if (c.getValueFromTask) return c.getValueFromTask(t);
+            // 2. Check payload (custom fields stored on the task)
+            if (t.type !== "empty" && t.payload) {
+              if (c.id in t.payload) return t.payload[c.id];
+            }
+            // 3. Direct property on the task object (e.g. name, start, end, progress)
+            if (c.id in t) return (t as any)[c.id];
+            // 4. Try common aliases: e.g. "startDate" -> "start", "finishDate" -> "end"
+            if (t.type !== "empty") {
+              const task = t as Task;
+              const aliasMap: Record<string, unknown> = {
+                startDate: task.start,
+                finishDate: task.end,
+                endDate: task.end,
+                duration:
+                  task.end && task.start
+                    ? Math.round(
+                        (task.end.getTime() - task.start.getTime()) /
+                          (1000 * 60 * 60 * 24)
+                      )
+                    : undefined,
+              };
+              if (c.id in aliasMap) return aliasMap[c.id];
+            }
+            return undefined;
+          };
+
+          const handleStartEdit = () => {
+            if (col.editable && onTaskInlineEdit) {
+              setEditingColumnId(colId);
+            }
+          };
+
+          const handleCommitEdit = (newValue: unknown) => {
+            setEditingColumnId(null);
+            if (onTaskInlineEdit) {
+              onTaskInlineEdit(task, colId, newValue);
+            }
+          };
+
+          const handleCancelEdit = () => {
+            setEditingColumnId(null);
+          };
+
+          // Build column data with editing callbacks
+          const cellColumnData: ColumnData = {
+            ...columnData,
+            isEditing: isEditingCell,
+            onStartEdit: handleStartEdit,
+            onCommitEdit: handleCommitEdit,
+            onCancelEdit: handleCancelEdit,
+          };
+
           return (
             <div
               className={styles.taskListCell}
@@ -249,9 +319,36 @@ const TaskListTableRowInner = forwardRef<HTMLDivElement, TaskListTableRowProps>(
                 maxWidth: width,
                 ...pinnedStyles[index],
               }}
-              key={`${id}-${index}`}
+              key={`${colId}-${index}`}
+              onDoubleClick={
+                col.editable && onTaskInlineEdit && !isEditingCell
+                  ? e => {
+                      e.stopPropagation();
+                      handleStartEdit();
+                    }
+                  : undefined
+              }
             >
-              <Component data={columnData} />
+              {isEditingCell ? (
+                col.editComponent ? (
+                  <col.editComponent
+                    data={cellColumnData}
+                    value={resolveValue(col)}
+                    onCommit={handleCommitEdit}
+                    onCancel={handleCancelEdit}
+                  />
+                ) : (
+                  <InlineEditCell
+                    value={resolveValue(col)}
+                    editType={col.editType}
+                    editOptions={col.editOptions}
+                    onCommit={handleCommitEdit}
+                    onCancel={handleCancelEdit}
+                  />
+                )
+              ) : (
+                <Component data={cellColumnData} />
+              )}
             </div>
           );
         })}

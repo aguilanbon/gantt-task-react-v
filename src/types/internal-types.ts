@@ -245,6 +245,14 @@ export type TaskListTableRowProps = {
   selectTaskOnMouseDown: (taskId: string, event: MouseEvent) => void;
   style?: CSSProperties;
   task: RenderTask;
+  /**
+   * Callback when a cell value is committed via inline editing.
+   */
+  onTaskInlineEdit?: (
+    task: RenderTask,
+    columnId: string,
+    newValue: unknown
+  ) => void;
 };
 
 export interface TaskListHeaderProps {

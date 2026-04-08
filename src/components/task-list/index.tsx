@@ -72,6 +72,11 @@ export type TaskListProps = {
   canToggleColumns?: boolean;
   onColumnVisibilityChange?: OnColumnVisibilityChange;
   tableBottom?: TableRenderBottomProps;
+  onTaskInlineEdit?: (
+    task: RenderTask,
+    columnId: string,
+    newValue: unknown
+  ) => void;
 };
 
 const TaskListInner: React.FC<TaskListProps> = ({
@@ -113,6 +118,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
   canToggleColumns,
   onColumnVisibilityChange,
   tableBottom,
+  onTaskInlineEdit,
 }) => {
   // Manage the column and list table resizing
   const [
@@ -182,6 +188,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
         selectTaskOnMouseDown: selectTaskOnMouseDown,
         task: task,
         depth: depth,
+        onTaskInlineEdit: onTaskInlineEdit,
       } as TaskListTableRowProps;
     },
     [
@@ -206,6 +213,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
       scrollToTask,
       selectTaskOnMouseDown,
       selectedIdsMirror,
+      onTaskInlineEdit,
     ]
   );
 
