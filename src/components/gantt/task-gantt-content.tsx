@@ -367,6 +367,11 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
             ? 0
             : Math.max(comparisonDates.height, 0);
 
+        const maxComparisonSvgHeight = Math.max(
+          distances.rowHeight - taskYOffset - taskHeight,
+          safeComparisonHeight
+        );
+
         tasksRes.push(
           <svg
             id={task.id + "_comparison"}
@@ -375,7 +380,7 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = props => {
             x={Math.max(safeComparisonX + (additionalLeftSpace || 0), 0)}
             y={safeComparisonY}
             width={safeComparisonWidth}
-            height={safeComparisonHeight * 2}
+            height={Math.min(safeComparisonHeight * 2, maxComparisonSvgHeight)}
           >
             <BarComparison
               inProgress={!task.comparisonDates.end}

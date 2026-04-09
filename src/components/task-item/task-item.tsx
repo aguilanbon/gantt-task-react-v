@@ -322,6 +322,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
           taskYOffset={taskYOffset}
           viewMode={viewMode}
           alwaysOutline={task.type === "project"}
+          forceOutside={props.showProgress && width > 40}
         />
       )}
     </g>

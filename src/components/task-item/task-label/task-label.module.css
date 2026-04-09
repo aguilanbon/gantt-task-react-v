@@ -19,6 +19,7 @@
 .barLabelOutside {
   fill: var(--gantt-secondary-text-color);
   text-anchor: start;
+  dominant-baseline: central;
   stroke: white;
   stroke-width: 4px;
   stroke-linejoin: round;

@@ -122,11 +122,18 @@ export const countTaskCoordinates = (
     cx1 = isNaN(cx1) || !isFinite(cx1) ? x1 : cx1;
     cx2 = isNaN(cx2) || !isFinite(cx2) ? x2 : cx2;
 
+    // Cap comparison bar height to fit within the remaining row space
+    const remainingRowSpace = distances.rowHeight - taskYOffset - taskHeight;
+    const clampedHeight = Math.min(
+      barComparisonTaskHeight,
+      Math.max(remainingRowSpace - 2, 2)
+    );
+
     comparisonDates = {
       x: cx1,
       y: y + taskHeight,
       width: Math.max(cx2 - cx1, 0),
-      height: barComparisonTaskHeight,
+      height: clampedHeight,
     };
   }
 

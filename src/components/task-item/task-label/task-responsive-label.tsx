@@ -4,12 +4,14 @@ import { TaskLabelProps } from "./types";
 
 interface Props extends TaskLabelProps {
   alwaysOutline?: boolean;
+  forceOutside?: boolean;
 }
 
 const TaskResponsiveLabelInner: React.FC<Props> = props => {
   const {
     alwaysOutline,
     arrowIndent,
+    forceOutside,
     rtl,
     label,
     taskHeight,
@@ -28,8 +30,10 @@ const TaskResponsiveLabelInner: React.FC<Props> = props => {
     }
   }, [textRef, width, viewMode]);
 
+  const shouldBeOutside = alwaysOutline || forceOutside;
+
   const calculatedX = useMemo(() => {
-    if (isTextInside && !alwaysOutline) {
+    if (isTextInside && !shouldBeOutside) {
       return x1 + width * 0.5;
     }
 
@@ -38,14 +42,14 @@ const TaskResponsiveLabelInner: React.FC<Props> = props => {
     }
 
     return x1 + width + arrowIndent * 1.2;
-  }, [alwaysOutline, x1, width, isTextInside, rtl, arrowIndent]);
+  }, [shouldBeOutside, x1, width, isTextInside, rtl, arrowIndent]);
 
   return (
     <text
       x={calculatedX}
       y={taskYOffset + taskHeight * 0.5}
       className={
-        isTextInside && !alwaysOutline
+        isTextInside && !shouldBeOutside
           ? style.barLabel
           : style.barLabel && style.barLabelOutside
       }
