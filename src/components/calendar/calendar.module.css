@@ -1,7 +1,10 @@
 .calendarBottomText {
   text-anchor: middle;
   /*noinspection CssUnresolvedCustomProperty*/
-  fill: var(--gantt-calendar-bottom-text-color, var(--gantt-secondary-text-color));
+  fill: var(
+    --gantt-calendar-bottom-text-color,
+    var(--gantt-secondary-text-color)
+  );
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -33,6 +36,12 @@
   /*noinspection CssUnresolvedCustomProperty*/
   stroke: var(--gantt-calendar-stroke-color);
   stroke-width: 1.4;
+}
+
+.calendarBottomSeparator {
+  /*noinspection CssUnresolvedCustomProperty*/
+  stroke: var(--gantt-calendar-stroke-color, #e0e0e0);
+  stroke-width: 1;
 }
 
 .calendar {

@@ -115,6 +115,18 @@ export const Calendar: React.FC<CalendarProps> = ({
 
       const bottomValue = renderBottomHeaderByDate(date, i);
 
+      // Vertical separator for each column
+      bottomValues.push(
+        <line
+          key={`year-sep-${i}`}
+          x1={additionalLeftSpace + columnWidth * i}
+          y1={0}
+          x2={additionalLeftSpace + columnWidth * i}
+          y2={headerHeight}
+          className={styles.calendarBottomSeparator}
+        />
+      );
+
       bottomValues.push(
         renderBottomText(
           columnWidth * i + columnWidth * 0.5,
@@ -152,10 +164,35 @@ export const Calendar: React.FC<CalendarProps> = ({
     const topValues: ReactNode[] = [];
     const bottomValues: ReactNode[] = [];
     const topDefaultHeight = headerHeight * 0.5;
+
+    // Horizontal separator between top and bottom headers
+    bottomValues.push(
+      <line
+        key="month-top-border"
+        x1={0}
+        y1={topDefaultHeight}
+        x2={fullSvgWidth}
+        y2={topDefaultHeight}
+        className={styles.calendarBottomSeparator}
+      />
+    );
+
     for (let i = startColumnIndex; i <= endColumnIndex; i++) {
       const date = getDate(i);
 
       const bottomValue = renderBottomHeaderByDate(date, i);
+
+      // Vertical separator for each bottom cell
+      bottomValues.push(
+        <line
+          key={`month-sep-${i}`}
+          x1={additionalLeftSpace + columnWidth * i}
+          y1={topDefaultHeight}
+          x2={additionalLeftSpace + columnWidth * i}
+          y2={headerHeight}
+          className={styles.calendarBottomSeparator}
+        />
+      );
 
       bottomValues.push(
         renderBottomText(
@@ -201,6 +238,19 @@ export const Calendar: React.FC<CalendarProps> = ({
     const bottomValues: ReactNode[] = [];
     let weeksCount: number = 1;
     const topDefaultHeight = headerHeight * 0.5;
+
+    // Horizontal separator between top and bottom headers
+    bottomValues.push(
+      <line
+        key="week-top-border"
+        x1={0}
+        y1={topDefaultHeight}
+        x2={fullSvgWidth}
+        y2={topDefaultHeight}
+        className={styles.calendarBottomSeparator}
+      />
+    );
+
     for (let i = endColumnIndex; i >= startColumnIndex; i--) {
       const date = getDate(i);
 
@@ -217,6 +267,18 @@ export const Calendar: React.FC<CalendarProps> = ({
       }
       // bottom
       const bottomValue = renderBottomHeaderByDate(date, i);
+
+      // Vertical separator for each bottom cell
+      bottomValues.push(
+        <line
+          key={`week-sep-${i}`}
+          x1={additionalLeftSpace + columnWidth * i}
+          y1={topDefaultHeight}
+          x2={additionalLeftSpace + columnWidth * i}
+          y2={headerHeight}
+          className={styles.calendarBottomSeparator}
+        />
+      );
 
       bottomValues.push(
         renderBottomText(
@@ -261,6 +323,18 @@ export const Calendar: React.FC<CalendarProps> = ({
 
     const renderedMonths = new Set<string>();
 
+    // Horizontal separator between top and bottom headers
+    bottomValues.push(
+      <line
+        key="day-top-border"
+        x1={0}
+        y1={topDefaultHeight}
+        x2={fullSvgWidth}
+        y2={topDefaultHeight}
+        className={styles.calendarBottomSeparator}
+      />
+    );
+
     for (let i = startColumnIndex; i <= endColumnIndex; i++) {
       const date = getDate(i);
 
@@ -268,6 +342,18 @@ export const Calendar: React.FC<CalendarProps> = ({
 
       const month = date.getMonth();
       const fullYear = date.getFullYear();
+
+      // Vertical separator for each bottom cell
+      bottomValues.push(
+        <line
+          key={`day-sep-${i}`}
+          x1={additionalLeftSpace + columnWidth * i}
+          y1={topDefaultHeight}
+          x2={additionalLeftSpace + columnWidth * i}
+          y2={headerHeight}
+          className={styles.calendarBottomSeparator}
+        />
+      );
 
       bottomValues.push(
         renderBottomText(
@@ -315,10 +401,35 @@ export const Calendar: React.FC<CalendarProps> = ({
     const bottomValues: ReactNode[] = [];
     const ticks = dateSetup.viewMode === ViewMode.HalfDay ? 2 : 4;
     const topDefaultHeight = headerHeight * 0.5;
+
+    // Horizontal separator between top and bottom headers
+    bottomValues.push(
+      <line
+        key="partday-top-border"
+        x1={0}
+        y1={topDefaultHeight}
+        x2={fullSvgWidth}
+        y2={topDefaultHeight}
+        className={styles.calendarBottomSeparator}
+      />
+    );
+
     for (let i = startColumnIndex; i <= endColumnIndex; i++) {
       const date = getDate(i);
 
       const bottomValue = renderBottomHeaderByDate(date, i);
+
+      // Vertical separator for each bottom cell
+      bottomValues.push(
+        <line
+          key={`partday-sep-${i}`}
+          x1={additionalLeftSpace + columnWidth * i}
+          y1={topDefaultHeight}
+          x2={additionalLeftSpace + columnWidth * i}
+          y2={headerHeight}
+          className={styles.calendarBottomSeparator}
+        />
+      );
 
       bottomValues.push(
         renderBottomText(
@@ -369,10 +480,34 @@ export const Calendar: React.FC<CalendarProps> = ({
 
     const renderedDates = new Set<string>();
 
+    // Horizontal separator between top and bottom headers
+    bottomValues.push(
+      <line
+        key="hour-top-border"
+        x1={0}
+        y1={topDefaultHeight}
+        x2={fullSvgWidth}
+        y2={topDefaultHeight}
+        className={styles.calendarBottomSeparator}
+      />
+    );
+
     for (let i = startColumnIndex; i <= endColumnIndex; i++) {
       const date = getDate(i);
 
       const bottomValue = renderBottomHeaderByDate(date, i);
+
+      // Vertical separator for each bottom cell
+      bottomValues.push(
+        <line
+          key={`hour-sep-${i}`}
+          x1={additionalLeftSpace + columnWidth * i}
+          y1={topDefaultHeight}
+          x2={additionalLeftSpace + columnWidth * i}
+          y2={headerHeight}
+          className={styles.calendarBottomSeparator}
+        />
+      );
 
       bottomValues.push(
         renderBottomText(
