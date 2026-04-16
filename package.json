@@ -22,7 +22,7 @@
     "task"
   ],
   "scripts": {
-    "storybook": "start-storybook -p 6006",
+    "storybook": "storybook dev -p 6006",
     "build": "vite build && tsc",
     "start": "vite --host",
     "prepare": "npm run build",
